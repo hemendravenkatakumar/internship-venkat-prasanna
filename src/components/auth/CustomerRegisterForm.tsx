@@ -7,6 +7,7 @@ import { Input } from '@/components/common/Form/Input';
 import { Select } from '@/components/common/Form/Select';
 import { Checkbox } from '@/components/common/Form/Checkbox';
 import { ROUTES } from '@/routes/paths';
+import { authService } from '@/services/authService';
 import {
   Building2,
   User,
@@ -194,6 +195,16 @@ export const CustomerRegisterForm: FC<CustomerRegisterFormProps> = ({
       if (onSubmitRegistration) {
         await onSubmitRegistration(payload);
       }
+
+      // Persist newly registered user in authService so they can log in immediately
+      authService.registerUser({
+        name: payload.contactPerson,
+        email: payload.email,
+        phone: payload.mobile,
+        company: payload.companyName,
+        location: payload.location,
+        password: payload.password,
+      });
 
       setIsSuccess(true);
     } catch (err: unknown) {

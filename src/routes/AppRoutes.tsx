@@ -23,6 +23,7 @@ import {
   CustomerDashboardPage,
   CustomerServiceRequestPage,
   CustomerRequestsPage,
+  CustomerProfilePage,
   EngineerDashboardPage,
   EngineerRequestsPage,
   AdminDashboardPage,
@@ -65,6 +66,7 @@ export const AppRoutes: React.FC = () => {
           <Route path={ROUTES.CUSTOMER.DASHBOARD} element={<CustomerDashboardPage />} />
           <Route path={ROUTES.CUSTOMER.SERVICE_REQUEST} element={<CustomerServiceRequestPage />} />
           <Route path={ROUTES.CUSTOMER.REQUESTS} element={<CustomerRequestsPage />} />
+          <Route path={ROUTES.CUSTOMER.PROFILE} element={<CustomerProfilePage />} />
         </Route>
 
         {/* Field Engineer Portal Placeholder Shell */}

@@ -12,9 +12,9 @@ import {
   Clock, 
   ShieldCheck, 
   User, 
-  ChevronRight,
-  ArrowRight
+  ChevronRight
 } from 'lucide-react';
+import { authService } from '@/services/authService';
 
 const publicNavItems: NavItem[] = [
   { label: 'Home', href: ROUTES.PUBLIC.HOME },
@@ -49,6 +49,13 @@ export const Navbar: FC = () => {
       document.body.style.overflow = '';
     };
   }, [isMobileMenuOpen]);
+
+  const currentUser = authService.getCurrentUser();
+  const portalDestination = currentUser
+    ? currentUser.role === 'admin'
+      ? ROUTES.ADMIN.DASHBOARD
+      : ROUTES.CUSTOMER.DASHBOARD
+    : ROUTES.AUTH.LOGIN;
 
   return (
     <header className="sticky top-0 z-40 w-full bg-white border-b border-slate-200 shadow-xs">
@@ -135,25 +142,15 @@ export const Navbar: FC = () => {
 
             {/* Header Action CTAs */}
             <div className="hidden lg:flex items-center gap-2.5">
-              <Link to={ROUTES.AUTH.LOGIN}>
+              <Link to={portalDestination}>
                 <Button variant="ghost" size="sm" leftIcon={<User className="w-4 h-4" />}>
-                  Client Portal
-                </Button>
-              </Link>
-              <Link to={ROUTES.CUSTOMER.SERVICE_REQUEST}>
-                <Button variant="industrial" size="sm" rightIcon={<ArrowRight className="w-4 h-4" />}>
-                  Request Service
+                  {currentUser ? 'My Dashboard' : 'Client Portal'}
                 </Button>
               </Link>
             </div>
 
             {/* Mobile Hamburger Button */}
             <div className="flex items-center gap-2 xl:hidden">
-              <Link to={ROUTES.CUSTOMER.SERVICE_REQUEST} className="hidden sm:inline-flex lg:hidden">
-                <Button variant="industrial" size="sm">
-                  Request Service
-                </Button>
-              </Link>
               <button
                 type="button"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -221,14 +218,9 @@ export const Navbar: FC = () => {
                 Industrial Portals
               </span>
               <div className="grid grid-cols-1 gap-2">
-                <Link to={ROUTES.AUTH.LOGIN} className="w-full">
-                  <Button variant="secondary" size="md" fullWidth leftIcon={<User className="w-4 h-4" />}>
-                    Customer / Staff Sign In
-                  </Button>
-                </Link>
-                <Link to={ROUTES.CUSTOMER.SERVICE_REQUEST} className="w-full">
-                  <Button variant="industrial" size="md" fullWidth rightIcon={<ArrowRight className="w-4 h-4" />}>
-                    Request Field Service
+                <Link to={portalDestination} className="w-full">
+                  <Button variant="industrial" size="md" fullWidth leftIcon={<User className="w-4 h-4" />}>
+                    {currentUser ? 'Go to My Dashboard' : 'Customer / Staff Sign In'}
                   </Button>
                 </Link>
               </div>

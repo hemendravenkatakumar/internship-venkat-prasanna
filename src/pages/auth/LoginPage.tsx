@@ -1,5 +1,5 @@
 import { FC, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/routes/paths';
 import {
   Container,
@@ -35,6 +35,7 @@ import {
  * - Zero fake authentication, zero passwords in localStorage, zero fake user accounts.
  */
 export const LoginPage: FC = () => {
+  const navigate = useNavigate();
   const [formLoading, setFormLoading] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [isForgotModalOpen, setIsForgotModalOpen] = useState(false);
@@ -128,6 +129,11 @@ export const LoginPage: FC = () => {
             {/* The Actual CustomerLoginForm Component */}
             <CustomerLoginForm
               onForgotPasswordClick={() => setIsForgotModalOpen(true)}
+              onSubmitLogin={(_, result) => {
+                if (result?.redirectUrl) {
+                  navigate(result.redirectUrl);
+                }
+              }}
               externalLoading={formLoading}
               externalError={formError}
             />

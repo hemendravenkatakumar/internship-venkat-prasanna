@@ -21,11 +21,12 @@ export const ROUTES = {
     REGISTER: '/register',
   },
 
-  // Customer Portal Placeholders (Future Module)
+  // Customer Portal (ReliefNet / VPE)
   CUSTOMER: {
     DASHBOARD: '/customer/dashboard',
     SERVICE_REQUEST: '/customer/service-request',
     REQUESTS: '/customer/requests',
+    PROFILE: '/customer/profile',
   },
 
   // Engineer Portal Placeholders (Future Module)

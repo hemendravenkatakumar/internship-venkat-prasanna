@@ -13,6 +13,7 @@ export * from './auth/RegisterPage';
 export * from './customer/CustomerDashboardPage';
 export * from './customer/CustomerServiceRequestPage';
 export * from './customer/CustomerRequestsPage';
+export * from './customer/CustomerProfilePage';
 
 export * from './engineer/EngineerDashboardPage';
 export * from './engineer/EngineerRequestsPage';

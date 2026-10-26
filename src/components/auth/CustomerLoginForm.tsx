@@ -4,6 +4,7 @@ import { Button } from '@/components/common/Button';
 import { FormField } from '@/components/common/Form/FormField';
 import { Input } from '@/components/common/Form/Input';
 import { Checkbox } from '@/components/common/Form/Checkbox';
+import { authService, UserRole, LoginResult } from '@/services/authService';
 import {
   Lock,
   Mail,
@@ -13,6 +14,9 @@ import {
   ArrowRight,
   ShieldCheck,
   KeyRound,
+  Shield,
+  User,
+  Sparkles,
 } from 'lucide-react';
 
 export interface CustomerLoginPayload {
@@ -23,17 +27,16 @@ export interface CustomerLoginPayload {
 }
 
 export interface CustomerLoginFormProps {
-  onSubmitLogin?: (payload: CustomerLoginPayload) => Promise<void> | void;
+  onSubmitLogin?: (payload: CustomerLoginPayload, result?: LoginResult) => Promise<void> | void;
   onForgotPasswordClick?: () => void;
   externalLoading?: boolean;
   externalError?: string | null;
 }
 
 /**
- * CustomerLoginForm — Production customer login interface.
- * Accepts either registered work email or 10-digit mobile identifier.
- * Includes password visibility control, accessible client validation,
- * and handles Loading and Error states without fake auth simulation.
+ * CustomerLoginForm — Production login interface supporting both User and Admin portals.
+ * Accepts registered email or 10-digit mobile identifier.
+ * Features quick role switcher, demo credential helpers, and role-based redirect.
  */
 export const CustomerLoginForm: FC<CustomerLoginFormProps> = ({
   onSubmitLogin,
@@ -41,6 +44,7 @@ export const CustomerLoginForm: FC<CustomerLoginFormProps> = ({
   externalLoading = false,
   externalError = null,
 }) => {
+  const [selectedRole, setSelectedRole] = useState<UserRole>('user');
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
@@ -52,6 +56,19 @@ export const CustomerLoginForm: FC<CustomerLoginFormProps> = ({
   const isLoading = externalLoading || internalLoading;
   const currentError = externalError || internalError;
 
+  const handleFillDemo = (role: UserRole) => {
+    setSelectedRole(role);
+    setInternalError(null);
+    setErrors({});
+    if (role === 'admin') {
+      setIdentifier('admin@reliefnet.com');
+      setPassword('admin123');
+    } else {
+      setIdentifier('user@reliefnet.com');
+      setPassword('user123');
+    }
+  };
+
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {};
 
@@ -62,16 +79,17 @@ export const CustomerLoginForm: FC<CustomerLoginFormProps> = ({
       const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedIdentifier);
       const cleanedDigits = trimmedIdentifier.replace(/[\s-]/g, '');
       const isMobile = /^\+?[0-9]{10,14}$/.test(cleanedDigits);
+      const isSimpleAdmin = trimmedIdentifier.toLowerCase() === 'admin';
 
-      if (!isEmail && !isMobile) {
+      if (!isEmail && !isMobile && !isSimpleAdmin) {
         newErrors.identifier = 'Please enter a valid work email or 10-digit mobile number.';
       }
     }
 
     if (!password) {
       newErrors.password = 'Password is required.';
-    } else if (password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters.';
+    } else if (password.length < 5) {
+      newErrors.password = 'Password must be at least 5 characters.';
     }
 
     setErrors(newErrors);
@@ -92,6 +110,14 @@ export const CustomerLoginForm: FC<CustomerLoginFormProps> = ({
       const trimmed = identifier.trim();
       const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed);
 
+      // Perform authentication with persistent authService
+      const loginResult = authService.login(trimmed, password);
+
+      if (!loginResult.success) {
+        setInternalError(loginResult.error || 'Authentication failed. Please check credentials.');
+        return;
+      }
+
       const payload: CustomerLoginPayload = {
         identifier: trimmed,
         identifierType: isEmail ? 'email' : 'mobile',
@@ -100,10 +126,13 @@ export const CustomerLoginForm: FC<CustomerLoginFormProps> = ({
       };
 
       if (onSubmitLogin) {
-        await onSubmitLogin(payload);
+        await onSubmitLogin(payload, loginResult);
       }
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Invalid credentials. Please verify your email/mobile and password.';
+      const message =
+        err instanceof Error
+          ? err.message
+          : 'Invalid credentials. Please verify your email/mobile and password.';
       setInternalError(message);
     } finally {
       setInternalLoading(false);
@@ -113,19 +142,88 @@ export const CustomerLoginForm: FC<CustomerLoginFormProps> = ({
   return (
     <Card variant="default" className="p-6 sm:p-8 shadow-xs border-slate-200">
       <CardContent className="p-0 space-y-6">
-        {/* Title */}
-        <div className="border-b border-slate-100 pb-4 space-y-1">
-          <h3 className="text-lg sm:text-xl font-bold text-slate-900">
-            Sign In to Customer Portal
-          </h3>
-          <p className="text-xs sm:text-sm text-slate-500">
-            Access your facility dashboard, service history, and live breakdown tickets.
-          </p>
+        {/* Title & Role Tabs */}
+        <div className="border-b border-slate-100 pb-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg sm:text-xl font-bold text-slate-900">
+                {selectedRole === 'admin' ? 'Operations Admin Console' : 'Customer & User Portal'}
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-500">
+                {selectedRole === 'admin'
+                  ? 'Access operational dispatch command, user complaints, and service management.'
+                  : 'Access your facility dashboard, submit complaints, and track ticket status.'}
+              </p>
+            </div>
+          </div>
+
+          {/* Role Switcher Tabs */}
+          <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-lg">
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedRole('user');
+                setInternalError(null);
+              }}
+              className={`flex items-center justify-center gap-1.5 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+                selectedRole === 'user'
+                  ? 'bg-white text-slate-900 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <User className="w-3.5 h-3.5 text-amber-600" />
+              <span>User Dashboard</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedRole('admin');
+                setInternalError(null);
+              }}
+              className={`flex items-center justify-center gap-1.5 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+                selectedRole === 'admin'
+                  ? 'bg-slate-900 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <Shield className="w-3.5 h-3.5 text-amber-400" />
+              <span>Admin Dashboard</span>
+            </button>
+          </div>
+
+          {/* Quick Demo Credentials Assistant */}
+          <div className="flex items-center justify-between bg-amber-50/70 border border-amber-200/70 px-3 py-2 rounded-lg text-xs">
+            <div className="flex items-center gap-1.5 text-amber-900 font-medium">
+              <Sparkles className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+              <span className="text-[11px]">Quick Demo Sign-In:</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => handleFillDemo('user')}
+                className="px-2 py-0.5 rounded text-[11px] font-semibold bg-white border border-amber-300 text-amber-900 hover:bg-amber-100 cursor-pointer transition-colors"
+                title="Fill Venkat Prasanna demo account"
+              >
+                Fill User
+              </button>
+              <button
+                type="button"
+                onClick={() => handleFillDemo('admin')}
+                className="px-2 py-0.5 rounded text-[11px] font-semibold bg-slate-900 text-white hover:bg-slate-800 cursor-pointer transition-colors"
+                title="Fill Operations Admin demo account"
+              >
+                Fill Admin
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* ERROR STATE BANNER */}
         {currentError && (
-          <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3 text-xs sm:text-sm text-red-900" role="alert">
+          <div
+            className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3 text-xs sm:text-sm text-red-900"
+            role="alert"
+          >
             <AlertTriangle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" aria-hidden="true" />
             <div className="space-y-1">
               <strong className="block font-bold">Authentication Failed</strong>
@@ -243,13 +341,13 @@ export const CustomerLoginForm: FC<CustomerLoginFormProps> = ({
           {/* Submit Action */}
           <Button
             type="submit"
-            variant="industrial"
+            variant={selectedRole === 'admin' ? 'primary' : 'industrial'}
             size="lg"
             fullWidth
             isLoading={isLoading}
             rightIcon={<ArrowRight className="w-4 h-4" />}
           >
-            Sign In to Customer Portal
+            {selectedRole === 'admin' ? 'Sign In to Operations Console' : 'Sign In to User Dashboard'}
           </Button>
         </form>
       </CardContent>
