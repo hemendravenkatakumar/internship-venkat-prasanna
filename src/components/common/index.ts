@@ -9,3 +9,4 @@ export * from './Badge';
 export * from './PagePlaceholder';
 export * from './LanguageSelector';
 export * from './VoiceRecorder';
+export * from './IndustrialImage';

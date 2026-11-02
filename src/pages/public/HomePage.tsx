@@ -6,6 +6,7 @@ import {
   SectionHeading,
   Button,
   Badge,
+  IndustrialImage,
 } from '@/components/common';
 import {
   ServiceCard,
@@ -15,6 +16,7 @@ import {
 import type { ServiceCardData } from '@/components/home/ServiceCard';
 import type { IndustryCardData } from '@/components/home/IndustryCard';
 import type { StrengthItemData } from '@/components/home/StrengthItem';
+import { INDUSTRIAL_IMAGES } from '@/config/images';
 import {
   ArrowRight,
   Phone,
@@ -22,21 +24,23 @@ import {
   Search,
   AlertTriangle,
   Settings,
-  CalendarCheck,
   Zap,
   Droplets,
   Factory,
   Nut,
   ShieldCheck,
   Clock,
-  Users,
   Headphones,
   Target,
   CheckCircle2,
   MapPin,
   Mail,
+  Users,
   Cog,
-  User,
+  Flame,
+  Gauge,
+  Milk,
+  FileSpreadsheet,
 } from 'lucide-react';
 
 /* ==========================================================================
@@ -51,96 +55,188 @@ import {
 
 /**
  * SERVICES DATA
- * Core industrial services offered by Venkata Prasanna Enterprises.
- * These are the approved service categories from the project requirements.
+ * 8 Core industrial services offered by Venkata Prasanna Enterprises with verified images.
  */
 const SERVICES: ServiceCardData[] = [
   {
     id: 'inspection',
-    title: 'Inspection',
+    title: 'Industrial Machine Inspection',
     description:
-      'Comprehensive equipment inspection and condition assessment for industrial machinery. Systematic evaluation to identify potential failures before they occur.',
-    icon: <Search className="w-6 h-6" />,
+      'Systematic on-site condition assessment, vibration analysis, and mechanical tolerance evaluations to identify potential component failures before breakdown.',
+    icon: <Search className="w-5 h-5" />,
     href: ROUTES.PUBLIC.SERVICES,
+    imageUrl: INDUSTRIAL_IMAGES.services.inspection.url,
+    imageAlt: INDUSTRIAL_IMAGES.services.inspection.alt,
   },
   {
     id: 'troubleshooting',
-    title: 'Troubleshooting',
+    title: 'Troubleshooting & Fault Diagnostics',
     description:
-      'Expert diagnostic troubleshooting for electrical, mechanical, and automated control system failures. Rapid root-cause analysis to minimize production downtime.',
-    icon: <AlertTriangle className="w-6 h-6" />,
+      'Expert root-cause diagnosis for motor trips, PLC automation lockups, drive misalignment, and unexpected production line halts.',
+    icon: <AlertTriangle className="w-5 h-5" />,
     href: ROUTES.PUBLIC.SERVICES,
+    imageUrl: INDUSTRIAL_IMAGES.services.troubleshooting.url,
+    imageAlt: INDUSTRIAL_IMAGES.services.troubleshooting.alt,
+  },
+  {
+    id: 'servicing',
+    title: 'Machine Servicing',
+    description:
+      'Precision mechanical and electromechanical servicing for industrial processing equipment, Sortex optical machines, gearboxes, and pumps.',
+    icon: <Wrench className="w-5 h-5" />,
+    href: ROUTES.PUBLIC.SERVICES,
+    imageUrl: INDUSTRIAL_IMAGES.services.servicing.url,
+    imageAlt: INDUSTRIAL_IMAGES.services.servicing.alt,
+  },
+  {
+    id: 'preventive-maintenance',
+    title: 'Preventive Maintenance',
+    description:
+      'Scheduled preventive maintenance regimens engineered to extend equipment operating lifespan and preserve factory throughput.',
+    icon: <Settings className="w-5 h-5" />,
+    href: ROUTES.PUBLIC.SERVICES,
+    imageUrl: INDUSTRIAL_IMAGES.services.preventiveMaintenance.url,
+    imageAlt: INDUSTRIAL_IMAGES.services.preventiveMaintenance.alt,
   },
   {
     id: 'repair',
-    title: 'Repair',
+    title: 'Machine Repair & Overhaul',
     description:
-      'Professional repair services for industrial equipment, motors, pumps, conveyors, and production line components. On-site and workshop repair capabilities.',
-    icon: <Wrench className="w-6 h-6" />,
+      'Comprehensive mechanical overhaul, dynamic balancing, bearing replacement, and on-site rebuilding of worn machinery components.',
+    icon: <Cog className="w-5 h-5" />,
     href: ROUTES.PUBLIC.SERVICES,
+    imageUrl: INDUSTRIAL_IMAGES.services.machineRepair.url,
+    imageAlt: INDUSTRIAL_IMAGES.services.machineRepair.alt,
   },
   {
-    id: 'maintenance',
-    title: 'Maintenance',
+    id: 'compressor-services',
+    title: 'Compressor Services',
     description:
-      'Preventive and scheduled maintenance programs designed to extend equipment lifespan, reduce breakdowns, and maintain optimal plant performance.',
-    icon: <Settings className="w-6 h-6" />,
+      'Specialized maintenance, valve rebuilding, pressure testing, and oil lubrication service for industrial reciprocating and screw air compressors.',
+    icon: <Gauge className="w-5 h-5" />,
     href: ROUTES.PUBLIC.SERVICES,
+    imageUrl: INDUSTRIAL_IMAGES.services.compressorServices.url,
+    imageAlt: INDUSTRIAL_IMAGES.services.compressorServices.alt,
+  },
+  {
+    id: 'gas-systems',
+    title: 'Gas System Services',
+    description:
+      'Industrial refrigeration gas system checks, ammonia (R-717) / freon leak detection, pipeline pressure testing, and valve calibration.',
+    icon: <Flame className="w-5 h-5" />,
+    href: ROUTES.PUBLIC.SERVICES,
+    imageUrl: INDUSTRIAL_IMAGES.services.gasSystemServices.url,
+    imageAlt: INDUSTRIAL_IMAGES.services.gasSystemServices.alt,
+    isOffered: true,
   },
   {
     id: 'installation',
     title: 'Installation & Commissioning',
     description:
-      'Professional installation and commissioning of industrial machinery and electrical systems. Complete setup, testing, and handover procedures.',
-    icon: <Zap className="w-6 h-6" />,
+      'Turnkey machinery installation, laser shaft alignment, control panel interconnection, and trial-run handover for new plant production lines.',
+    icon: <Zap className="w-5 h-5" />,
     href: ROUTES.PUBLIC.SERVICES,
-  },
-  {
-    id: 'annual-maintenance',
-    title: 'Annual Maintenance Contracts',
-    description:
-      'Structured annual maintenance contract programs covering periodic servicing, emergency support, and dedicated technical assistance for your facility.',
-    icon: <CalendarCheck className="w-6 h-6" />,
-    href: ROUTES.PUBLIC.SERVICE_CHARGES,
+    imageUrl: INDUSTRIAL_IMAGES.services.installationCommissioning.url,
+    imageAlt: INDUSTRIAL_IMAGES.services.installationCommissioning.alt,
+    isOffered: true,
   },
 ];
 
 /**
  * INDUSTRIES DATA
- * Industries served by VPE as specified in the approved requirements.
+ * 7 Core industry sectors served by VPE with distinct photographic cards.
  */
 const INDUSTRIES: IndustryCardData[] = [
   {
     id: 'rice-mills',
     name: 'Rice Mills',
     description:
-      'Maintenance and repair of rice processing equipment including hullers, polishers, sortex machines, dryers, and conveyor systems.',
+      'Maintenance and repair for rubber roll hullers, paddy separators, polishers, sortex optical sorters, and high-speed bucket elevators.',
     icon: <Droplets className="w-5 h-5" />,
     href: ROUTES.PUBLIC.INDUSTRIES,
+    imageUrl: INDUSTRIAL_IMAGES.industries.riceMills.url,
+    imageAlt: INDUSTRIAL_IMAGES.industries.riceMills.alt,
+    servicesProvided: INDUSTRIAL_IMAGES.industries.riceMills.servicesProvided,
+    vendorStatus: INDUSTRIAL_IMAGES.industries.riceMills.vendorStatus,
+    verifiedExperience: INDUSTRIAL_IMAGES.industries.riceMills.verifiedExperience,
   },
   {
     id: 'textile',
-    name: 'Textile & Cloth Industries',
+    name: 'Textile Industries',
     description:
-      'Servicing of textile machinery including looms, spinning frames, dyeing equipment, and quality control instruments.',
+      'Servicing for spinning frames, rapier & air-jet looms, carding systems, thread tensioners, and AC variable frequency drives.',
     icon: <Factory className="w-5 h-5" />,
     href: ROUTES.PUBLIC.INDUSTRIES,
+    imageUrl: INDUSTRIAL_IMAGES.industries.textile.url,
+    imageAlt: INDUSTRIAL_IMAGES.industries.textile.alt,
+    servicesProvided: INDUSTRIAL_IMAGES.industries.textile.servicesProvided,
+    vendorStatus: INDUSTRIAL_IMAGES.industries.textile.vendorStatus,
+    verifiedExperience: INDUSTRIAL_IMAGES.industries.textile.verifiedExperience,
   },
   {
     id: 'cashew',
     name: 'Cashew Industries',
     description:
-      'Equipment servicing for cashew processing plants including cutting machines, drying units, peeling equipment, and grading systems.',
+      'Complete servicing for automatic cashew cutters, borma steam dryers, peeling drums, sizing screens, and packaging units.',
     icon: <Nut className="w-5 h-5" />,
     href: ROUTES.PUBLIC.INDUSTRIES,
+    imageUrl: INDUSTRIAL_IMAGES.industries.cashew.url,
+    imageAlt: INDUSTRIAL_IMAGES.industries.cashew.alt,
+    servicesProvided: INDUSTRIAL_IMAGES.industries.cashew.servicesProvided,
+    vendorStatus: INDUSTRIAL_IMAGES.industries.cashew.vendorStatus,
+    verifiedExperience: INDUSTRIAL_IMAGES.industries.cashew.verifiedExperience,
   },
   {
-    id: 'general-manufacturing',
-    name: 'General Manufacturing',
+    id: 'paper-mills',
+    name: 'Paper Mills',
     description:
-      'Broad-spectrum industrial servicing for manufacturing facilities including production line equipment, material handling, and utility systems.',
+      'Mechanical care for high-tonnage pulp rollers, calendar stacks, steam condensate pumps, and hydraulic roll tensioners.',
+    icon: <FileSpreadsheet className="w-5 h-5" />,
+    href: ROUTES.PUBLIC.INDUSTRIES,
+    imageUrl: INDUSTRIAL_IMAGES.industries.paperMills.url,
+    imageAlt: INDUSTRIAL_IMAGES.industries.paperMills.alt,
+    servicesProvided: INDUSTRIAL_IMAGES.industries.paperMills.servicesProvided,
+    vendorStatus: INDUSTRIAL_IMAGES.industries.paperMills.vendorStatus,
+    verifiedExperience: INDUSTRIAL_IMAGES.industries.paperMills.verifiedExperience,
+  },
+  {
+    id: 'steel-plants',
+    name: 'Steel Plants',
+    description:
+      'Heavy mechanical and electrical overhaul for rolling mill drives, high-pressure cooling pumps, and overhead crane switchgear.',
+    icon: <Wrench className="w-5 h-5" />,
+    href: ROUTES.PUBLIC.INDUSTRIES,
+    imageUrl: INDUSTRIAL_IMAGES.industries.steelPlants.url,
+    imageAlt: INDUSTRIAL_IMAGES.industries.steelPlants.alt,
+    servicesProvided: INDUSTRIAL_IMAGES.industries.steelPlants.servicesProvided,
+    vendorStatus: INDUSTRIAL_IMAGES.industries.steelPlants.vendorStatus,
+    verifiedExperience: INDUSTRIAL_IMAGES.industries.steelPlants.verifiedExperience,
+  },
+  {
+    id: 'dairy',
+    name: 'Dairy Industries',
+    description:
+      'Preventive maintenance for milk processing homogenizers, ammonia refrigeration chillers, and sanitary centrifugal pumps.',
+    icon: <Milk className="w-5 h-5" />,
+    href: ROUTES.PUBLIC.INDUSTRIES,
+    imageUrl: INDUSTRIAL_IMAGES.industries.dairy.url,
+    imageAlt: INDUSTRIAL_IMAGES.industries.dairy.alt,
+    servicesProvided: INDUSTRIAL_IMAGES.industries.dairy.servicesProvided,
+    vendorStatus: INDUSTRIAL_IMAGES.industries.dairy.vendorStatus,
+    verifiedExperience: INDUSTRIAL_IMAGES.industries.dairy.verifiedExperience,
+  },
+  {
+    id: 'other',
+    name: 'Other Industrial Plants',
+    description:
+      'Broad-spectrum breakdown support for biomass boilers, aquaculture feed pellet mills, and bulk agro-chemical equipment.',
     icon: <Cog className="w-5 h-5" />,
     href: ROUTES.PUBLIC.INDUSTRIES,
+    imageUrl: INDUSTRIAL_IMAGES.industries.other.url,
+    imageAlt: INDUSTRIAL_IMAGES.industries.other.alt,
+    servicesProvided: INDUSTRIAL_IMAGES.industries.other.servicesProvided,
+    vendorStatus: INDUSTRIAL_IMAGES.industries.other.vendorStatus,
+    verifiedExperience: INDUSTRIAL_IMAGES.industries.other.verifiedExperience,
   },
 ];
 
@@ -207,13 +303,22 @@ export const HomePage: FC = () => {
     <>
       {/* ================================================================
           SECTION 1: HERO
-          Company identity, industrial service positioning, primary CTAs.
+          Industrial service positioning with authentic industrial images
           ================================================================ */}
       <section
         aria-labelledby="hero-title"
         className="relative bg-slate-900 text-white overflow-hidden"
       >
-        {/* Background pattern - abstract industrial grid */}
+        {/* Subtle background machinery texture with dark overlay */}
+        <div className="absolute inset-0 opacity-15 pointer-events-none mix-blend-luminosity">
+          <img
+            src={INDUSTRIAL_IMAGES.hero.wideFactory.url}
+            alt={INDUSTRIAL_IMAGES.hero.wideFactory.alt}
+            className="w-full h-full object-cover"
+          />
+        </div>
+
+        {/* Abstract industrial grid */}
         <div className="absolute inset-0 opacity-[0.04] pointer-events-none" aria-hidden="true">
           <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
             <defs>
@@ -226,84 +331,143 @@ export const HomePage: FC = () => {
         </div>
 
         <Container size="2xl">
-          <div className="relative z-10 py-16 sm:py-20 lg:py-28">
-            <div className="max-w-3xl space-y-6 sm:space-y-8">
-              {/* Eyebrow */}
-              <div className="flex flex-wrap items-center gap-3">
-                <Badge variant="amber" icon={<Wrench className="w-3 h-3" />}>
-                  Industrial Service Management
-                </Badge>
+          <div className="relative z-10 py-16 sm:py-20 lg:py-24">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
+              {/* Left Column: Headline, Description, and CTAs */}
+              <div className="lg:col-span-7 space-y-6 sm:space-y-8">
+                {/* Eyebrow */}
+                <div className="flex flex-wrap items-center gap-3">
+                  <Badge variant="amber" icon={<Wrench className="w-3.5 h-3.5" />}>
+                    Venkata Prasanna Enterprises
+                  </Badge>
+                  <span className="text-xs font-mono text-slate-400">
+                    Industrial Service & Breakdown Support
+                  </span>
+                </div>
+
+                {/* Main Heading as Specified */}
+                <h1
+                  id="hero-title"
+                  className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black tracking-tight leading-[1.1]"
+                >
+                  Reliable Industrial Service &{' '}
+                  <span className="text-amber-400">Maintenance Solutions</span>
+                </h1>
+
+                {/* Supporting Description */}
+                <p className="text-base sm:text-lg text-slate-300 leading-relaxed max-w-2xl">
+                  Comprehensive engineering care for rice mills, textile plants, cashew processing facilities,
+                  ammonia refrigeration, and heavy industrial machinery. Field inspection, precision overhaul,
+                  compressor tuning, and rapid technical dispatch.
+                </p>
+
+                {/* Action Buttons: Request a Service & Explore Our Services */}
+                <div className="flex flex-wrap items-center gap-4 pt-2">
+                  <Link to={ROUTES.CUSTOMER.SERVICE_REQUEST}>
+                    <Button
+                      variant="industrial"
+                      size="lg"
+                      rightIcon={<ArrowRight className="w-5 h-5" />}
+                    >
+                      Request a Service
+                    </Button>
+                  </Link>
+                  <Link to={ROUTES.PUBLIC.SERVICES}>
+                    <Button
+                      variant="secondary"
+                      size="lg"
+                      className="bg-white/10 text-white border-white/20 hover:bg-white/20 active:bg-white/25"
+                    >
+                      Explore Our Services
+                    </Button>
+                  </Link>
+                </div>
+
+                {/* Trust Badges */}
+                <div className="pt-4 flex flex-wrap items-center gap-6 text-xs text-slate-400">
+                  <span className="flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                    Certified Industrial Field Engineers
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-amber-400" />
+                    Rapid On-Site Breakdown Dispatch
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-blue-400" />
+                    Certified Service Documentation
+                  </span>
+                </div>
               </div>
 
-              {/* Headline */}
-              <h1
-                id="hero-title"
-                className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black tracking-tight leading-[1.1]"
-              >
-                Professional Industrial{' '}
-                <span className="text-amber-400">Equipment Servicing</span>{' '}
-                You Can Rely On
-              </h1>
-
-              {/* Supporting Description */}
-              <p className="text-base sm:text-lg lg:text-xl text-slate-300 leading-relaxed max-w-2xl">
-                Venkata Prasanna Enterprises provides inspection, troubleshooting,
-                repair, and maintenance services for rice mills, textile industries,
-                cashew processing plants, and manufacturing facilities.
-              </p>
-
-              {/* Primary & Secondary CTAs */}
-              <div className="flex flex-wrap items-center gap-4 pt-2">
-                <Link to={ROUTES.CUSTOMER.SERVICE_REQUEST}>
-                  <Button
-                    variant="industrial"
-                    size="lg"
-                    rightIcon={<ArrowRight className="w-5 h-5" />}
-                  >
-                    Request Service
-                  </Button>
-                </Link>
-                <Link to={ROUTES.PUBLIC.CONTACT}>
-                  <Button
-                    variant="secondary"
-                    size="lg"
-                    leftIcon={<Phone className="w-4 h-4" />}
-                    className="bg-white/10 text-white border-white/20 hover:bg-white/20 active:bg-white/25"
-                  >
-                    Contact Us
-                  </Button>
-                </Link>
-              </div>
-            </div>
-
-            {/* Hero Trust Indicators (compact) */}
-            <div className="mt-12 sm:mt-16 pt-8 border-t border-white/10">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-amber-500/15 border border-amber-500/25 flex items-center justify-center shrink-0">
-                    <ShieldCheck className="w-5 h-5 text-amber-400" aria-hidden="true" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-white">Professional Engineers</p>
-                    <p className="text-xs text-slate-400">Skilled field service team</p>
+              {/* Right Column: 5 Industrial Hero Reference Showcase */}
+              <div className="lg:col-span-5 space-y-3">
+                {/* Main Large Showcase Image: Wide Factory Maintenance */}
+                <div className="rounded-2xl overflow-hidden border border-slate-700 shadow-2xl relative group bg-slate-800">
+                  <IndustrialImage
+                    src={INDUSTRIAL_IMAGES.hero.wideFactory.url}
+                    alt={INDUSTRIAL_IMAGES.hero.wideFactory.alt}
+                    aspectRatio="video"
+                    objectFit="cover"
+                    caption="Factory Operations & Continuous Machinery Maintenance"
+                  />
+                  <div className="absolute top-3 left-3 bg-slate-900/80 backdrop-blur-xs text-amber-400 font-mono text-[10px] font-bold px-2 py-0.5 rounded border border-amber-500/30">
+                    Industrial Service HQ
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-amber-500/15 border border-amber-500/25 flex items-center justify-center shrink-0">
-                    <Clock className="w-5 h-5 text-amber-400" aria-hidden="true" />
+
+                {/* 4 Thumbnail Reference Photos Grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  <div className="rounded-xl overflow-hidden border border-slate-700 bg-slate-800 group relative">
+                    <IndustrialImage
+                      src={INDUSTRIAL_IMAGES.hero.technicianInspecting.url}
+                      alt={INDUSTRIAL_IMAGES.hero.technicianInspecting.alt}
+                      aspectRatio="square"
+                      objectFit="cover"
+                      className="h-20 w-full"
+                    />
+                    <span className="absolute bottom-1 inset-x-1 text-[9px] text-white bg-slate-950/80 px-1 py-0.5 rounded truncate text-center">
+                      1. Inspection
+                    </span>
                   </div>
-                  <div>
-                    <p className="text-sm font-semibold text-white">Responsive Service</p>
-                    <p className="text-xs text-slate-400">Timely dispatch & support</p>
+
+                  <div className="rounded-xl overflow-hidden border border-slate-700 bg-slate-800 group relative">
+                    <IndustrialImage
+                      src={INDUSTRIAL_IMAGES.hero.motorCompressorServicing.url}
+                      alt={INDUSTRIAL_IMAGES.hero.motorCompressorServicing.alt}
+                      aspectRatio="square"
+                      objectFit="cover"
+                      className="h-20 w-full"
+                    />
+                    <span className="absolute bottom-1 inset-x-1 text-[9px] text-white bg-slate-950/80 px-1 py-0.5 rounded truncate text-center">
+                      2. Compressor
+                    </span>
                   </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-amber-500/15 border border-amber-500/25 flex items-center justify-center shrink-0">
-                    <Factory className="w-5 h-5 text-amber-400" aria-hidden="true" />
+
+                  <div className="rounded-xl overflow-hidden border border-slate-700 bg-slate-800 group relative">
+                    <IndustrialImage
+                      src={INDUSTRIAL_IMAGES.hero.machineRepair.url}
+                      alt={INDUSTRIAL_IMAGES.hero.machineRepair.alt}
+                      aspectRatio="square"
+                      objectFit="cover"
+                      className="h-20 w-full"
+                    />
+                    <span className="absolute bottom-1 inset-x-1 text-[9px] text-white bg-slate-950/80 px-1 py-0.5 rounded truncate text-center">
+                      3. Repair
+                    </span>
                   </div>
-                  <div>
-                    <p className="text-sm font-semibold text-white">Multi-Industry Coverage</p>
-                    <p className="text-xs text-slate-400">Rice, Textile, Cashew & more</p>
+
+                  <div className="rounded-xl overflow-hidden border border-slate-700 bg-slate-800 group relative">
+                    <IndustrialImage
+                      src={INDUSTRIAL_IMAGES.hero.workshopFactory.url}
+                      alt={INDUSTRIAL_IMAGES.hero.workshopFactory.alt}
+                      aspectRatio="square"
+                      objectFit="cover"
+                      className="h-20 w-full"
+                    />
+                    <span className="absolute bottom-1 inset-x-1 text-[9px] text-white bg-slate-950/80 px-1 py-0.5 rounded truncate text-center">
+                      4. Workshop
+                    </span>
                   </div>
                 </div>
               </div>
@@ -420,9 +584,18 @@ export const HomePage: FC = () => {
                       className="w-32 h-32 rounded-full object-cover border-4 border-amber-500"
                     />
                   */}
-                  <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-slate-800 border-4 border-amber-500/50 flex items-center justify-center mb-5">
-                    <User className="w-14 h-14 sm:w-16 sm:h-16 text-slate-500" aria-hidden="true" />
+                  <div className="w-28 h-28 sm:w-36 sm:h-36 rounded-full overflow-hidden border-4 border-amber-500/60 shadow-lg mb-4 bg-slate-800">
+                    <IndustrialImage
+                      src={INDUSTRIAL_IMAGES.about.leadEngineer.url}
+                      alt={INDUSTRIAL_IMAGES.about.leadEngineer.alt}
+                      aspectRatio="square"
+                      objectFit="cover"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
+                  <span className="text-[10px] text-amber-400 font-mono mb-2 block">
+                    (VPE Certified Field Specialist Reference)
+                  </span>
 
                   <h3 id="engineer-title" className="text-xl sm:text-2xl font-bold tracking-tight">
                     {/* CONTENT PLACEHOLDER: Replace with actual engineer name */}
@@ -524,7 +697,7 @@ export const HomePage: FC = () => {
             }
           />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
             {SERVICES.map((service) => (
               <ServiceCard key={service.id} service={service} />
             ))}
@@ -534,14 +707,14 @@ export const HomePage: FC = () => {
 
       {/* ================================================================
           SECTION 5: INDUSTRIES SERVED
-          Sectors supported by VPE as per approved requirements.
+          7 Core industry categories served by VPE with distinct image cards.
           ================================================================ */}
       <section aria-labelledby="industries-title" className="py-16 sm:py-20 lg:py-24 bg-slate-50 border-y border-slate-200">
         <Container size="2xl">
           <SectionHeading
             badge="Industries We Serve"
             title="Equipment Servicing Across Key Industries"
-            subtitle="We provide maintenance and repair services to plants and factories across these industrial sectors."
+            subtitle="We provide specialized maintenance and repair services to plants and factories across these 7 industrial sectors."
             align="center"
             action={
               <Link to={ROUTES.PUBLIC.INDUSTRIES}>
@@ -556,7 +729,7 @@ export const HomePage: FC = () => {
             }
           />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
             {INDUSTRIES.map((industry) => (
               <IndustryCard key={industry.id} industry={industry} />
             ))}

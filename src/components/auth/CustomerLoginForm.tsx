@@ -17,6 +17,7 @@ import {
   Shield,
   User,
   Sparkles,
+  Wrench,
 } from 'lucide-react';
 
 export interface CustomerLoginPayload {
@@ -63,6 +64,9 @@ export const CustomerLoginForm: FC<CustomerLoginFormProps> = ({
     if (role === 'admin') {
       setIdentifier('admin@reliefnet.com');
       setPassword('admin123');
+    } else if (role === 'engineer') {
+      setIdentifier('engineer@vpe.com');
+      setPassword('engineer123');
     } else {
       setIdentifier('user@reliefnet.com');
       setPassword('user123');
@@ -147,18 +151,24 @@ export const CustomerLoginForm: FC<CustomerLoginFormProps> = ({
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg sm:text-xl font-bold text-slate-900">
-                {selectedRole === 'admin' ? 'Operations Admin Console' : 'Customer & User Portal'}
+                {selectedRole === 'admin'
+                  ? 'Owner & Operations Admin Console'
+                  : selectedRole === 'engineer'
+                  ? 'Field Engineer Service Terminal'
+                  : 'Customer & Client Facility Portal'}
               </h3>
               <p className="text-xs sm:text-sm text-slate-500">
                 {selectedRole === 'admin'
-                  ? 'Access operational dispatch command, user complaints, and service management.'
-                  : 'Access your facility dashboard, submit complaints, and track ticket status.'}
+                  ? 'Access operational dispatch command, scheduling, service records, and management.'
+                  : selectedRole === 'engineer'
+                  ? 'View assigned breakdown jobs, inspect customer voice notes, and issue certified service records.'
+                  : 'Access your facility dashboard, submit breakdown tickets, and inspect service history.'}
               </p>
             </div>
           </div>
 
-          {/* Role Switcher Tabs */}
-          <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-lg">
+          {/* Role Switcher Tabs (3 Roles: Customer, Engineer, Owner & Admin) */}
+          <div className="grid grid-cols-3 gap-1.5 p-1 bg-slate-100 rounded-lg">
             <button
               type="button"
               onClick={() => {
@@ -172,7 +182,22 @@ export const CustomerLoginForm: FC<CustomerLoginFormProps> = ({
               }`}
             >
               <User className="w-3.5 h-3.5 text-amber-600" />
-              <span>User Dashboard</span>
+              <span>Customer</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedRole('engineer');
+                setInternalError(null);
+              }}
+              className={`flex items-center justify-center gap-1.5 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+                selectedRole === 'engineer'
+                  ? 'bg-blue-900 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <Wrench className="w-3.5 h-3.5 text-amber-400" />
+              <span>Field Engineer</span>
             </button>
             <button
               type="button"
@@ -187,24 +212,32 @@ export const CustomerLoginForm: FC<CustomerLoginFormProps> = ({
               }`}
             >
               <Shield className="w-3.5 h-3.5 text-amber-400" />
-              <span>Owner & Admin Console</span>
+              <span>Owner & Admin</span>
             </button>
           </div>
 
           {/* Quick Demo Credentials Assistant */}
-          <div className="flex items-center justify-between bg-amber-50/70 border border-amber-200/70 px-3 py-2 rounded-lg text-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-amber-50/70 border border-amber-200/70 px-3 py-2 rounded-lg text-xs gap-2">
             <div className="flex items-center gap-1.5 text-amber-900 font-medium">
               <Sparkles className="w-3.5 h-3.5 text-amber-600 shrink-0" />
               <span className="text-[11px]">Quick Demo Sign-In:</span>
             </div>
-            <div className="flex items-center gap-1.5">
+            <div className="flex flex-wrap items-center gap-1.5">
               <button
                 type="button"
                 onClick={() => handleFillDemo('user')}
                 className="px-2 py-0.5 rounded text-[11px] font-semibold bg-white border border-amber-300 text-amber-900 hover:bg-amber-100 cursor-pointer transition-colors"
-                title="Fill Venkat Prasanna demo account"
+                title="Fill Venkat Prasanna customer demo account"
               >
                 Customer
+              </button>
+              <button
+                type="button"
+                onClick={() => handleFillDemo('engineer')}
+                className="px-2 py-0.5 rounded text-[11px] font-semibold bg-blue-900 text-white hover:bg-blue-800 cursor-pointer transition-colors"
+                title="Fill Field Engineer demo account"
+              >
+                Field Engineer
               </button>
               <button
                 type="button"

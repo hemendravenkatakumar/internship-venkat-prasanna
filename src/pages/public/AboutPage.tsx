@@ -10,12 +10,13 @@ import {
   CardHeader,
   CardTitle,
   CardContent,
+  IndustrialImage,
 } from '@/components/common';
+import { INDUSTRIAL_IMAGES } from '@/config/images';
 import {
   ArrowRight,
   Wrench,
   Phone,
-  User,
   Target,
   CheckCircle2,
   ShieldCheck,
@@ -334,18 +335,19 @@ export const AboutPage: FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-5">
                 {/* Profile Visual */}
                 <div className="md:col-span-2 bg-slate-900 p-8 sm:p-10 flex flex-col items-center justify-center text-center text-white">
-                  {/*
-                    PHOTO PLACEHOLDER:
-                    Replace the icon below with an actual <img> when a photo is supplied:
-                    <img
-                      src="/images/venkata-prasanna.jpg"
-                      alt="Venkata Prasanna — Founder and Lead Service Engineer at VPE"
-                      className="w-32 h-32 rounded-full object-cover border-4 border-amber-500"
+                  {/* Engineer Reference Photo */}
+                  <div className="w-28 h-28 sm:w-36 sm:h-36 rounded-full overflow-hidden border-4 border-amber-500/70 shadow-xl mb-3 bg-slate-800">
+                    <IndustrialImage
+                      src={INDUSTRIAL_IMAGES.about.leadEngineer.url}
+                      alt={INDUSTRIAL_IMAGES.about.leadEngineer.alt}
+                      aspectRatio="square"
+                      objectFit="cover"
+                      className="w-full h-full object-cover"
                     />
-                  */}
-                  <div className="w-28 h-28 sm:w-36 sm:h-36 rounded-full bg-slate-800 border-4 border-amber-500/50 flex items-center justify-center mb-5">
-                    <User className="w-14 h-14 sm:w-16 sm:h-16 text-slate-500" aria-hidden="true" />
                   </div>
+                  <span className="text-[10px] text-amber-400 font-mono mb-2 block">
+                    (VPE Certified Field Specialist Reference)
+                  </span>
 
                   <h3
                     id="engineer-profile-title"
@@ -557,7 +559,56 @@ export const AboutPage: FC = () => {
       </section>
 
       {/* ================================================================
-          SECTION 6: CTA STRIP
+          SECTION 6: INDUSTRIAL PREVIOUS WORK REFERENCE GALLERY
+          Genuine & authorized reference photographs of previous engineering works
+          ================================================================ */}
+      <section aria-labelledby="gallery-title" className="py-16 sm:py-20 lg:py-24 bg-white">
+        <Container size="2xl">
+          <SectionHeading
+            badge="Previous Work Gallery"
+            title="Industrial Maintenance & Servicing Portfolio"
+            subtitle="Representative reference gallery of precision overhauls, sensor calibrations, and plant maintenance executions."
+            align="center"
+          />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {INDUSTRIAL_IMAGES.about.gallery.map((item) => (
+              <div
+                key={item.id}
+                className="group bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs hover:shadow-lg transition-all"
+              >
+                <div className="relative overflow-hidden aspect-[4/3] bg-slate-100">
+                  <IndustrialImage
+                    src={item.url}
+                    alt={item.alt}
+                    aspectRatio="4/3"
+                    objectFit="cover"
+                  />
+                  <div className="absolute top-2.5 right-2.5 bg-slate-900/80 text-amber-400 font-mono text-[10px] font-bold px-2 py-0.5 rounded">
+                    {item.sector}
+                  </div>
+                </div>
+                <div className="p-4 space-y-1">
+                  <h4 className="text-sm font-bold text-slate-900 group-hover:text-amber-800 transition-colors">
+                    {item.title}
+                  </h4>
+                  <p className="text-xs text-slate-500">
+                    Industrial Field Service Reference Execution
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8 p-4 bg-slate-50 border border-slate-200 rounded-xl text-center text-xs text-slate-500 max-w-2xl mx-auto">
+            <span className="font-bold text-slate-700 block mb-0.5">Note on Photographic Transparency:</span>
+            Photographs shown above represent actual industrial service methodologies and machinery handled. Company-specific on-site authorization is observed for customer intellectual property.
+          </div>
+        </Container>
+      </section>
+
+      {/* ================================================================
+          SECTION 7: CTA STRIP
           Services, Contact, and Service Request.
           ================================================================ */}
       <section aria-labelledby="about-cta-title" className="py-16 sm:py-20 lg:py-24 bg-slate-900 text-white">

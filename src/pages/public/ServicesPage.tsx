@@ -15,6 +15,7 @@ import {
   DetailedServiceData,
 } from '@/components/services';
 import type { ServiceCardData } from '@/components/home/ServiceCard';
+import { INDUSTRIAL_IMAGES } from '@/config/images';
 import {
   Wrench,
   Search,
@@ -29,66 +30,102 @@ import {
   ClipboardList,
   Layers,
   FileCheck,
+  Gauge,
+  Flame,
+  Cog,
 } from 'lucide-react';
 
 /* ==========================================================================
  * SERVICES CATALOG DATA
  * --------------------------------------------------------------------------
- * Structured data models ready to be loaded from a CMS or REST API.
- * NO fake pricing, simulated customer reviews, or unverified claims are added.
+ * Structured data models with authentic industrial images.
  * ========================================================================== */
 
 /**
- * Top-level quick navigation cards for the service catalog.
+ * 8 Core industrial services requested with photographic cards.
  */
 const SERVICE_CATALOG_CARDS: ServiceCardData[] = [
   {
     id: 'inspection',
-    title: 'Inspection',
+    title: '1. Industrial Machine Inspection',
     description:
-      'Systematic on-site condition assessment and mechanical/electrical evaluations to detect wear, structural fatigue, and potential component failures.',
-    icon: <Search className="w-6 h-6" />,
+      'Systematic on-site condition assessment, vibration analysis, and mechanical tolerance evaluations to detect wear, fatigue, and potential component failures.',
+    icon: <Search className="w-5 h-5" />,
     href: '#service-inspection',
+    imageUrl: INDUSTRIAL_IMAGES.services.inspection.url,
+    imageAlt: INDUSTRIAL_IMAGES.services.inspection.alt,
   },
   {
     id: 'troubleshooting',
-    title: 'Troubleshooting',
+    title: '2. Troubleshooting & Diagnostics',
     description:
-      'Root-cause diagnostic evaluations for unexpected machine shutdowns, motor trips, electrical anomalies, and mechanical resistance.',
-    icon: <AlertTriangle className="w-6 h-6" />,
+      'Root-cause diagnostic evaluations for unexpected machine shutdowns, motor trips, PLC electrical anomalies, and mechanical resistance.',
+    icon: <AlertTriangle className="w-5 h-5" />,
     href: '#service-troubleshooting',
+    imageUrl: INDUSTRIAL_IMAGES.services.troubleshooting.url,
+    imageAlt: INDUSTRIAL_IMAGES.services.troubleshooting.alt,
+  },
+  {
+    id: 'servicing',
+    title: '3. Machine Servicing',
+    description:
+      'Precision mechanical and electromechanical servicing for industrial processing equipment, Sortex optical machines, gearboxes, and pumps.',
+    icon: <Wrench className="w-5 h-5" />,
+    href: '#service-servicing',
+    imageUrl: INDUSTRIAL_IMAGES.services.servicing.url,
+    imageAlt: INDUSTRIAL_IMAGES.services.servicing.alt,
+  },
+  {
+    id: 'preventive-maintenance',
+    title: '4. Preventive Maintenance',
+    description:
+      'Scheduled preventive maintenance programs designed to preserve machine tolerances, minimize plant downtime, and extend equipment lifecycle.',
+    icon: <Settings className="w-5 h-5" />,
+    href: '#service-maintenance',
+    imageUrl: INDUSTRIAL_IMAGES.services.preventiveMaintenance.url,
+    imageAlt: INDUSTRIAL_IMAGES.services.preventiveMaintenance.alt,
   },
   {
     id: 'repair',
-    title: 'Repair',
+    title: '5. Machine Repair & Overhaul',
     description:
       'Precision restoration and component replacement for industrial machinery, motor drives, pumps, conveyors, and mechanical assemblies.',
-    icon: <Wrench className="w-6 h-6" />,
+    icon: <Cog className="w-5 h-5" />,
     href: '#service-repair',
+    imageUrl: INDUSTRIAL_IMAGES.services.machineRepair.url,
+    imageAlt: INDUSTRIAL_IMAGES.services.machineRepair.alt,
   },
   {
-    id: 'maintenance',
-    title: 'Maintenance',
+    id: 'compressor-services',
+    title: '6. Compressor Services',
     description:
-      'Scheduled preventive maintenance programs designed to preserve machine tolerances, minimize downtime, and extend equipment lifecycle.',
-    icon: <Settings className="w-6 h-6" />,
-    href: '#service-maintenance',
+      'Overhaul, valve rebuilding, pressure testing, and oil lubrication service for industrial reciprocating and screw air compressors.',
+    icon: <Gauge className="w-5 h-5" />,
+    href: '#service-compressor',
+    imageUrl: INDUSTRIAL_IMAGES.services.compressorServices.url,
+    imageAlt: INDUSTRIAL_IMAGES.services.compressorServices.alt,
+  },
+  {
+    id: 'gas-systems',
+    title: '7. Gas System Services',
+    description:
+      'Industrial refrigeration gas system checks, ammonia (R-717) / freon leak detection, pipeline pressure testing, and safety valve calibration.',
+    icon: <Flame className="w-5 h-5" />,
+    href: '#service-gas',
+    imageUrl: INDUSTRIAL_IMAGES.services.gasSystemServices.url,
+    imageAlt: INDUSTRIAL_IMAGES.services.gasSystemServices.alt,
+    isOffered: true,
   },
   {
     id: 'installation',
-    title: 'Installation & Commissioning',
+    title: '8. Installation & Commissioning',
     description:
-      'Professional mounting, wiring interconnection, alignment, pre-start testing, and operational handover for newly installed plant equipment.',
-    icon: <Zap className="w-6 h-6" />,
+      'Professional mounting, wiring interconnection, laser alignment, pre-start testing, and operational handover for newly installed plant equipment.',
+    icon: <Zap className="w-5 h-5" />,
     href: '#service-installation',
-  },
-  {
-    id: 'amc',
-    title: 'Annual Maintenance Contracts (AMC)',
-    description:
-      'Structured annual contracts providing scheduled periodic servicing, priority technical dispatch, and preventive maintenance records.',
-    icon: <CalendarCheck className="w-6 h-6" />,
-    href: '#service-amc',
+    imageUrl: INDUSTRIAL_IMAGES.services.installationCommissioning.url,
+    imageAlt: INDUSTRIAL_IMAGES.services.installationCommissioning.alt,
+    isOffered: true,
   },
 ];
 

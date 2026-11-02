@@ -57,8 +57,18 @@ export const Navbar: FC = () => {
   const portalDestination = currentUser
     ? currentUser.role === 'admin'
       ? ROUTES.ADMIN.DASHBOARD
+      : currentUser.role === 'engineer'
+      ? ROUTES.ENGINEER.DASHBOARD
       : ROUTES.CUSTOMER.DASHBOARD
     : ROUTES.AUTH.LOGIN;
+
+  const portalLabel = currentUser
+    ? currentUser.role === 'admin'
+      ? 'Owner & Admin'
+      : currentUser.role === 'engineer'
+      ? 'Engineer Terminal'
+      : 'Customer Portal'
+    : 'Customer Portal';
 
   return (
     <header className="sticky top-0 z-40 w-full bg-white border-b border-slate-200 shadow-xs">
@@ -149,7 +159,7 @@ export const Navbar: FC = () => {
             <div className="hidden lg:flex items-center gap-2.5">
               <Link to={portalDestination}>
                 <Button variant="ghost" size="sm" leftIcon={<User className="w-4 h-4" />}>
-                  {currentUser ? 'My Dashboard' : 'Client Portal'}
+                  {portalLabel}
                 </Button>
               </Link>
             </div>

@@ -43,6 +43,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
   const isCustomerPortal = location.pathname.startsWith('/customer');
   const isAdminPortal = location.pathname.startsWith('/admin');
+  const isEngineerPortal = location.pathname.startsWith('/engineer');
 
   // Enforce authentication: Visitors must sign in before accessing portal dashboards
   if (isCustomerPortal && !currentUser) {
@@ -53,8 +54,14 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     return <Navigate to={ROUTES.AUTH.LOGIN} replace />;
   }
 
+  if (isEngineerPortal && (!currentUser || (currentUser.role !== 'engineer' && currentUser.role !== 'admin'))) {
+    return <Navigate to={ROUTES.AUTH.LOGIN} replace />;
+  }
+
   const defaultPortalName = isAdminPortal
     ? t('admin.portal_name')
+    : isEngineerPortal
+    ? 'Field Engineer Service Terminal'
     : t('customer.dashboard_title');
   const displayPortalName = portalName || defaultPortalName;
 
@@ -63,6 +70,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     { label: t('request.title'), path: ROUTES.CUSTOMER.SERVICE_REQUEST, icon: <FilePlus className="w-3.5 h-3.5" /> },
     { label: t('customer.active_requests'), path: ROUTES.CUSTOMER.REQUESTS, icon: <Clock className="w-3.5 h-3.5" /> },
     { label: 'Profile', path: ROUTES.CUSTOMER.PROFILE, icon: <UserCheck className="w-3.5 h-3.5" /> },
+  ];
+
+  const engineerNavLinks = [
+    { label: 'Operations Terminal', path: ROUTES.ENGINEER.DASHBOARD, icon: <LayoutDashboard className="w-3.5 h-3.5" /> },
+    { label: 'Assigned Service Requests', path: ROUTES.ENGINEER.REQUESTS, icon: <Wrench className="w-3.5 h-3.5" /> },
   ];
 
   return (
@@ -137,6 +149,29 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           {isCustomerPortal && (
             <div className="border-t border-slate-800 py-1.5 flex items-center gap-1 overflow-x-auto scrollbar-none">
               {customerNavLinks.map((tab) => {
+                const isActive = location.pathname === tab.path;
+                return (
+                  <Link
+                    key={tab.path}
+                    to={tab.path}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md whitespace-nowrap transition-colors ${
+                      isActive
+                        ? 'bg-amber-500 text-slate-950 font-bold'
+                        : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                    }`}
+                  >
+                    {tab.icon}
+                    <span>{tab.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Subnavigation Bar for Field Engineer Terminal */}
+          {isEngineerPortal && (
+            <div className="border-t border-slate-800 py-1.5 flex items-center gap-1 overflow-x-auto scrollbar-none">
+              {engineerNavLinks.map((tab) => {
                 const isActive = location.pathname === tab.path;
                 return (
                   <Link

@@ -15,6 +15,7 @@ import {
   IndustryDetailData,
 } from '@/components/industries';
 import type { IndustryCardData } from '@/components/home/IndustryCard';
+import { INDUSTRIAL_IMAGES } from '@/config/images';
 import {
   Factory,
   Droplets,
@@ -26,50 +27,110 @@ import {
   Phone,
   Layers,
   HelpCircle,
+  FileSpreadsheet,
+  Milk,
 } from 'lucide-react';
 
 /* ==========================================================================
  * INDUSTRIES SECTORS DATA
  * --------------------------------------------------------------------------
- * Structured data models ready for CMS or backend API integration.
- * IMPORTANT: No invented client logos, fake customers, or unverified claims.
+ * Structured data models with authentic industrial reference images.
  * ========================================================================== */
 
 /**
- * Top-level quick navigation cards for industries served.
+ * 7 Core Industry Categories Served by VPE with distinct photographic cards.
  */
 const INDUSTRY_NAV_CARDS: IndustryCardData[] = [
   {
     id: 'rice-mills',
-    name: 'Rice Mills',
+    name: '1. Rice Mills',
     description:
-      'Specialized maintenance and repair for rubber roll hullers, paddy separators, polishers, sortex optical sorters, and grain elevators.',
+      'Specialized maintenance and repair for rubber roll hullers, paddy separators, polishers, sortex optical sorters, and grain bucket elevators.',
     icon: <Droplets className="w-5 h-5" />,
     href: '#industry-rice-mills',
+    imageUrl: INDUSTRIAL_IMAGES.industries.riceMills.url,
+    imageAlt: INDUSTRIAL_IMAGES.industries.riceMills.alt,
+    servicesProvided: INDUSTRIAL_IMAGES.industries.riceMills.servicesProvided,
+    vendorStatus: INDUSTRIAL_IMAGES.industries.riceMills.vendorStatus,
+    verifiedExperience: INDUSTRIAL_IMAGES.industries.riceMills.verifiedExperience,
   },
   {
     id: 'textile',
-    name: 'Textile & Cloth Industries',
+    name: '2. Textile Industries',
     description:
       'Precision mechanical servicing and motor diagnostics for ring spinning frames, cone winders, rapier & air-jet looms, and processing drives.',
     icon: <Factory className="w-5 h-5" />,
     href: '#industry-textile',
+    imageUrl: INDUSTRIAL_IMAGES.industries.textile.url,
+    imageAlt: INDUSTRIAL_IMAGES.industries.textile.alt,
+    servicesProvided: INDUSTRIAL_IMAGES.industries.textile.servicesProvided,
+    vendorStatus: INDUSTRIAL_IMAGES.industries.textile.vendorStatus,
+    verifiedExperience: INDUSTRIAL_IMAGES.industries.textile.verifiedExperience,
   },
   {
     id: 'cashew',
-    name: 'Cashew Processing',
+    name: '3. Cashew Industries',
     description:
       'Engineering care for steam boilers, automatic cutting machines, borma drying chambers, peeling drums, and vacuum packaging systems.',
     icon: <Nut className="w-5 h-5" />,
     href: '#industry-cashew',
+    imageUrl: INDUSTRIAL_IMAGES.industries.cashew.url,
+    imageAlt: INDUSTRIAL_IMAGES.industries.cashew.alt,
+    servicesProvided: INDUSTRIAL_IMAGES.industries.cashew.servicesProvided,
+    vendorStatus: INDUSTRIAL_IMAGES.industries.cashew.vendorStatus,
+    verifiedExperience: INDUSTRIAL_IMAGES.industries.cashew.verifiedExperience,
+  },
+  {
+    id: 'paper-mills',
+    name: '4. Paper Mills',
+    description:
+      'Comprehensive plant maintenance for pulp roller bearings, calendar stack hydraulic tensioners, steam condensate pumps, and slurry agitators.',
+    icon: <FileSpreadsheet className="w-5 h-5" />,
+    href: '#industry-paper-mills',
+    imageUrl: INDUSTRIAL_IMAGES.industries.paperMills.url,
+    imageAlt: INDUSTRIAL_IMAGES.industries.paperMills.alt,
+    servicesProvided: INDUSTRIAL_IMAGES.industries.paperMills.servicesProvided,
+    vendorStatus: INDUSTRIAL_IMAGES.industries.paperMills.vendorStatus,
+    verifiedExperience: INDUSTRIAL_IMAGES.industries.paperMills.verifiedExperience,
+  },
+  {
+    id: 'steel-plants',
+    name: '5. Steel Plants',
+    description:
+      'Heavy mechanical and electrical overhaul for rolling mill gear drives, high-pressure cooling water pumps, and overhead crane control switchgear.',
+    icon: <Wrench className="w-5 h-5" />,
+    href: '#industry-steel-plants',
+    imageUrl: INDUSTRIAL_IMAGES.industries.steelPlants.url,
+    imageAlt: INDUSTRIAL_IMAGES.industries.steelPlants.alt,
+    servicesProvided: INDUSTRIAL_IMAGES.industries.steelPlants.servicesProvided,
+    vendorStatus: INDUSTRIAL_IMAGES.industries.steelPlants.vendorStatus,
+    verifiedExperience: INDUSTRIAL_IMAGES.industries.steelPlants.verifiedExperience,
+  },
+  {
+    id: 'dairy',
+    name: '6. Dairy Industries',
+    description:
+      'Preventive servicing for milk pasteurization homogenizers, ammonia refrigeration blast chillers, and sanitary stainless-steel centrifugal pumps.',
+    icon: <Milk className="w-5 h-5" />,
+    href: '#industry-dairy',
+    imageUrl: INDUSTRIAL_IMAGES.industries.dairy.url,
+    imageAlt: INDUSTRIAL_IMAGES.industries.dairy.alt,
+    servicesProvided: INDUSTRIAL_IMAGES.industries.dairy.servicesProvided,
+    vendorStatus: INDUSTRIAL_IMAGES.industries.dairy.vendorStatus,
+    verifiedExperience: INDUSTRIAL_IMAGES.industries.dairy.verifiedExperience,
   },
   {
     id: 'manufacturing',
-    name: 'General Manufacturing',
+    name: '7. Other Industrial Plants',
     description:
-      'Comprehensive plant maintenance for conveyor systems, reduction gearboxes, industrial pumps, air compressors, and motor control panels.',
+      'Broad-spectrum breakdown support for biomass boilers, aquaculture feed pellet mills, bulk agro-chemical plants, and material handling conveyors.',
     icon: <Cog className="w-5 h-5" />,
     href: '#industry-manufacturing',
+    imageUrl: INDUSTRIAL_IMAGES.industries.other.url,
+    imageAlt: INDUSTRIAL_IMAGES.industries.other.alt,
+    servicesProvided: INDUSTRIAL_IMAGES.industries.other.servicesProvided,
+    vendorStatus: INDUSTRIAL_IMAGES.industries.other.vendorStatus,
+    verifiedExperience: INDUSTRIAL_IMAGES.industries.other.verifiedExperience,
   },
 ];
 

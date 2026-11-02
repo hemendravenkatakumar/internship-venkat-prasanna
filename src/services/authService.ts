@@ -5,7 +5,7 @@
 
 import { storageService } from './storageService';
 
-export type UserRole = 'user' | 'admin';
+export type UserRole = 'user' | 'admin' | 'engineer';
 
 export interface UserProfile {
   id: string;
@@ -67,6 +67,18 @@ const DEFAULT_ACCOUNTS: StoredUserAccount[] = [
     passwordHash: 'client123',
     joinedAt: '2026-03-01T00:00:00.000Z',
   },
+  {
+    id: 'usr-eng-01',
+    name: 'K. Srinivas (Lead Field Specialist)',
+    email: 'engineer@vpe.com',
+    phone: '+91 94401 55678',
+    role: 'engineer',
+    company: 'VPE Industrial Field Engineering Team',
+    location: 'Tadepalligudem & Godavari Region',
+    industry: 'Industrial Electromechanical & Compressor Specialist',
+    passwordHash: 'engineer123',
+    joinedAt: '2026-01-15T00:00:00.000Z',
+  },
 ];
 
 export interface LoginResult {
@@ -85,6 +97,12 @@ export const authService = {
     if (existing.length === 0) {
       storageService.setItem(STORAGE_KEY_ACCOUNTS, DEFAULT_ACCOUNTS);
       return DEFAULT_ACCOUNTS;
+    }
+    // Ensure engineer account exists
+    if (!existing.some((a) => a.role === 'engineer')) {
+      const engineerAcc = DEFAULT_ACCOUNTS.find((a) => a.role === 'engineer')!;
+      existing.push(engineerAcc);
+      storageService.setItem(STORAGE_KEY_ACCOUNTS, existing);
     }
     return existing;
   },
@@ -134,6 +152,16 @@ export const authService = {
         return { success: true, user: profile, redirectUrl: '/customer/dashboard' };
       }
 
+      if (
+        (cleanId === 'engineer' || cleanId === 'field') &&
+        (password === 'engineer123' || password === 'engineer' || password === 'field123')
+      ) {
+        const engAcc = accounts.find((a) => a.role === 'engineer') || DEFAULT_ACCOUNTS[3];
+        const { passwordHash: _, ...profile } = engAcc;
+        storageService.setItem(STORAGE_KEY_SESSION, profile);
+        return { success: true, user: profile, redirectUrl: '/engineer/dashboard' };
+      }
+
       return {
         success: false,
         redirectUrl: '',
@@ -144,10 +172,17 @@ export const authService = {
     const { passwordHash: _, ...profile } = account;
     storageService.setItem(STORAGE_KEY_SESSION, profile);
 
+    const redirectUrl =
+      profile.role === 'admin'
+        ? '/admin/dashboard'
+        : profile.role === 'engineer'
+        ? '/engineer/dashboard'
+        : '/customer/dashboard';
+
     return {
       success: true,
       user: profile,
-      redirectUrl: profile.role === 'admin' ? '/admin/dashboard' : '/customer/dashboard',
+      redirectUrl,
     };
   },
 
@@ -156,7 +191,9 @@ export const authService = {
    */
   loginAsRole(role: UserRole): UserProfile {
     const accounts = this.getAccounts();
-    const target = accounts.find((a) => a.role === role) || (role === 'admin' ? DEFAULT_ACCOUNTS[0] : DEFAULT_ACCOUNTS[1]);
+    const target =
+      accounts.find((a) => a.role === role) ||
+      (role === 'admin' ? DEFAULT_ACCOUNTS[0] : role === 'engineer' ? DEFAULT_ACCOUNTS[3] : DEFAULT_ACCOUNTS[1]);
     const { passwordHash: _, ...profile } = target;
     storageService.setItem(STORAGE_KEY_SESSION, profile);
     return profile;
