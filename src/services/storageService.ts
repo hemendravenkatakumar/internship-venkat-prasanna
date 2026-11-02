@@ -51,17 +51,17 @@ export const storageService = {
   },
 
   /**
-   * Generates a unique, sequentially incremented complaint token
-   * Format: RN-YYYY-XXXX (e.g. RN-2026-0001)
+   * Generates a unique, sequentially incremented service request token
+   * Format: VPE-SR-YYYY-XXXX (e.g. VPE-SR-2026-0001)
    */
   generateComplaintToken(): string {
-    const COUNTER_KEY = 'reliefnet_token_sequence';
+    const COUNTER_KEY = 'vpe_service_request_sequence';
     const currentYear = new Date().getFullYear();
-    const currentSeq = this.getItem<number>(COUNTER_KEY, 0) + 1;
+    const currentSeq = this.getItem<number>(COUNTER_KEY, 3) + 1;
     this.setItem(COUNTER_KEY, currentSeq);
 
     const padded = String(currentSeq).padStart(4, '0');
-    return `RN-${currentYear}-${padded}`;
+    return `VPE-SR-${currentYear}-${padded}`;
   },
 
   /**

@@ -187,7 +187,7 @@ export const CustomerLoginForm: FC<CustomerLoginFormProps> = ({
               }`}
             >
               <Shield className="w-3.5 h-3.5 text-amber-400" />
-              <span>Admin Dashboard</span>
+              <span>Owner & Admin Console</span>
             </button>
           </div>
 
@@ -204,15 +204,15 @@ export const CustomerLoginForm: FC<CustomerLoginFormProps> = ({
                 className="px-2 py-0.5 rounded text-[11px] font-semibold bg-white border border-amber-300 text-amber-900 hover:bg-amber-100 cursor-pointer transition-colors"
                 title="Fill Venkat Prasanna demo account"
               >
-                Fill User
+                Customer
               </button>
               <button
                 type="button"
                 onClick={() => handleFillDemo('admin')}
                 className="px-2 py-0.5 rounded text-[11px] font-semibold bg-slate-900 text-white hover:bg-slate-800 cursor-pointer transition-colors"
-                title="Fill Operations Admin demo account"
+                title="Fill Owner & Admin demo account"
               >
-                Fill Admin
+                Owner & Admin
               </button>
             </div>
           </div>

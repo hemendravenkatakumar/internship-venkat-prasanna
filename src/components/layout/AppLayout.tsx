@@ -2,6 +2,8 @@ import React, { ReactNode } from 'react';
 import { Outlet, Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { ROUTES } from '@/routes/paths';
 import { Container } from '@/components/common/Container';
+import { LanguageSelector } from '@/components/common/LanguageSelector';
+import { useLanguage } from '@/context/LanguageContext';
 import { authService } from '@/services/authService';
 import {
   Wrench,
@@ -27,11 +29,12 @@ export interface AppLayoutProps {
  */
 export const AppLayout: React.FC<AppLayoutProps> = ({
   children,
-  portalName = 'Management Portal',
+  portalName,
 }) => {
   const currentUser = authService.getCurrentUser();
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const handleLogout = () => {
     authService.logout();
@@ -50,10 +53,15 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     return <Navigate to={ROUTES.AUTH.LOGIN} replace />;
   }
 
+  const defaultPortalName = isAdminPortal
+    ? t('admin.portal_name')
+    : t('customer.dashboard_title');
+  const displayPortalName = portalName || defaultPortalName;
+
   const customerNavLinks = [
-    { label: 'Dashboard', path: ROUTES.CUSTOMER.DASHBOARD, icon: <LayoutDashboard className="w-3.5 h-3.5" /> },
-    { label: 'Submit Complaint', path: ROUTES.CUSTOMER.SERVICE_REQUEST, icon: <FilePlus className="w-3.5 h-3.5" /> },
-    { label: 'My Complaints', path: ROUTES.CUSTOMER.REQUESTS, icon: <Clock className="w-3.5 h-3.5" /> },
+    { label: t('customer.total_requests'), path: ROUTES.CUSTOMER.DASHBOARD, icon: <LayoutDashboard className="w-3.5 h-3.5" /> },
+    { label: t('request.title'), path: ROUTES.CUSTOMER.SERVICE_REQUEST, icon: <FilePlus className="w-3.5 h-3.5" /> },
+    { label: t('customer.active_requests'), path: ROUTES.CUSTOMER.REQUESTS, icon: <Clock className="w-3.5 h-3.5" /> },
     { label: 'Profile', path: ROUTES.CUSTOMER.PROFILE, icon: <UserCheck className="w-3.5 h-3.5" /> },
   ];
 
@@ -77,11 +85,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               <span className="text-slate-600">/</span>
               <span className="text-xs sm:text-sm font-medium text-amber-400 bg-amber-950/60 px-2.5 py-1 rounded border border-amber-800/60 flex items-center gap-1.5">
                 <Shield className="w-3.5 h-3.5" />
-                {portalName}
+                {displayPortalName}
               </span>
             </div>
 
-            <div className="flex items-center gap-3 sm:gap-4">
+            <div className="flex items-center gap-2.5 sm:gap-4">
+              <LanguageSelector variant="dark" />
               {currentUser ? (
                 <div className="flex items-center gap-2.5">
                   <div className="hidden sm:flex flex-col text-right">
@@ -89,7 +98,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                       {currentUser.name}
                     </span>
                     <span className="text-[10px] text-amber-400 font-mono capitalize">
-                      {currentUser.role} • {currentUser.company || 'ReliefNet'}
+                      {currentUser.role === 'admin' ? 'Owner / Admin' : 'Customer'} • {currentUser.company || 'VPE'}
                     </span>
                   </div>
                   <button
@@ -99,7 +108,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     title="Sign out of portal session"
                   >
                     <LogOut className="w-3.5 h-3.5" />
-                    <span className="hidden sm:inline">Logout</span>
+                    <span className="hidden sm:inline">{t('nav.logout')}</span>
                   </button>
                 </div>
               ) : (

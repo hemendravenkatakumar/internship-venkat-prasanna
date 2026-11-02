@@ -3,6 +3,8 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import { ROUTES } from '@/routes/paths';
 import { Container } from '@/components/common/Container';
 import { Button } from '@/components/common/Button';
+import { LanguageSelector } from '@/components/common/LanguageSelector';
+import { useLanguage } from '@/context/LanguageContext';
 import { NavItem } from '@/types';
 import { 
   Wrench, 
@@ -16,20 +18,21 @@ import {
 } from 'lucide-react';
 import { authService } from '@/services/authService';
 
-const publicNavItems: NavItem[] = [
-  { label: 'Home', href: ROUTES.PUBLIC.HOME },
-  { label: 'About', href: ROUTES.PUBLIC.ABOUT },
-  { label: 'Services', href: ROUTES.PUBLIC.SERVICES },
-  { label: 'Industries', href: ROUTES.PUBLIC.INDUSTRIES },
-  { label: 'Vendor Experience', href: ROUTES.PUBLIC.VENDOR_EXPERIENCE },
-  { label: 'Service Charges', href: ROUTES.PUBLIC.SERVICE_CHARGES },
-  { label: 'Reviews', href: ROUTES.PUBLIC.REVIEWS },
-  { label: 'Contact', href: ROUTES.PUBLIC.CONTACT },
-];
-
 export const Navbar: FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { t } = useLanguage();
+
+  const publicNavItems: NavItem[] = [
+    { label: t('nav.home'), href: ROUTES.PUBLIC.HOME },
+    { label: t('nav.about'), href: ROUTES.PUBLIC.ABOUT },
+    { label: t('nav.services'), href: ROUTES.PUBLIC.SERVICES },
+    { label: t('nav.industries'), href: ROUTES.PUBLIC.INDUSTRIES },
+    { label: t('nav.vendor_experience'), href: ROUTES.PUBLIC.VENDOR_EXPERIENCE },
+    { label: t('nav.service_charges'), href: ROUTES.PUBLIC.SERVICE_CHARGES },
+    { label: t('nav.reviews'), href: ROUTES.PUBLIC.REVIEWS },
+    { label: t('nav.contact'), href: ROUTES.PUBLIC.CONTACT },
+  ];
 
   // Reset mobile drawer whenever the pathname changes
   const [prevPathname, setPrevPathname] = useState(location.pathname);
@@ -74,13 +77,15 @@ export const Navbar: FC = () => {
               </span>
             </div>
 
-            <div className="flex items-center gap-4 text-xs">
+            <div className="flex items-center gap-3 text-xs">
+              <LanguageSelector variant="dark" />
+              <span className="text-slate-700 hidden sm:inline">|</span>
               <a
                 href="tel:+918000000000"
-                className="flex items-center gap-1 text-slate-200 hover:text-amber-400 transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-amber-400 rounded"
+                className="hidden lg:flex items-center gap-1 text-slate-200 hover:text-amber-400 transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-amber-400 rounded"
               >
                 <Phone className="w-3 h-3 text-amber-500" aria-hidden="true" />
-                <span className="font-semibold tracking-wide">Emergency: +91 (Industrial Dispatch)</span>
+                <span className="font-semibold tracking-wide">Emergency: +91 800-000-0000</span>
               </a>
               <span className="text-slate-700 hidden sm:inline">|</span>
               <Link
@@ -88,7 +93,7 @@ export const Navbar: FC = () => {
                 className="hidden sm:inline-flex items-center gap-1 text-slate-300 hover:text-white transition-colors"
               >
                 <User className="w-3 h-3" aria-hidden="true" />
-                <span>Portal Login</span>
+                <span>{t('nav.login')}</span>
               </Link>
             </div>
           </div>

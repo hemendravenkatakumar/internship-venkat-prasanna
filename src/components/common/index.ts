@@ -7,3 +7,5 @@ export * from './Feedback';
 export * from './SectionHeading';
 export * from './Badge';
 export * from './PagePlaceholder';
+export * from './LanguageSelector';
+export * from './VoiceRecorder';

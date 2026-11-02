@@ -3,3 +3,8 @@ export * from './authService';
 export * from './emailService';
 export * from './complaintsService';
 export * from './servicesService';
+export * from './notificationsService';
+export * from './engineerRecordsService';
+export * from './reviewsService';
+export * from './industriesService';
+export * from './vendorRegistrationsService';

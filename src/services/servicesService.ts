@@ -14,6 +14,10 @@ export interface ServiceRecord {
   description: string;
   contactInfo: string;
   status: 'active' | 'inactive';
+  baseCharge?: string;
+  hourlyRate?: string;
+  emergencySurcharge?: string;
+  estimatedDuration?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -25,6 +29,10 @@ export interface NewServicePayload {
   description?: string;
   contactInfo?: string;
   status: 'active' | 'inactive';
+  baseCharge?: string;
+  hourlyRate?: string;
+  emergencySurcharge?: string;
+  estimatedDuration?: string;
 }
 
 const STORAGE_KEY_SERVICES = 'reliefnet_dynamic_services';
@@ -42,6 +50,10 @@ const INITIAL_FOUR_SERVICES: ServiceRecord[] = [
       'Systematic on-site condition assessment, vibration analysis, and mechanical/electrical diagnostic evaluations to prevent catastrophic failures.',
     contactInfo: '+91 800-000-0000 | dispatch@vpe.com',
     status: 'active',
+    baseCharge: '₹2,500',
+    hourlyRate: '₹600/hr',
+    emergencySurcharge: '₹1,000',
+    estimatedDuration: '2 - 3 Hours',
     createdAt: '2026-01-01T00:00:00.000Z',
     updatedAt: '2026-01-01T00:00:00.000Z',
   },
@@ -54,6 +66,10 @@ const INITIAL_FOUR_SERVICES: ServiceRecord[] = [
       'High-priority diagnostics for unexpected shutdowns, motor trips, PLC automated anomalies, and power transmission bottlenecks.',
     contactInfo: '+91 98765 43210 | emergency@vpe.com',
     status: 'active',
+    baseCharge: '₹3,500',
+    hourlyRate: '₹850/hr',
+    emergencySurcharge: '₹1,500',
+    estimatedDuration: '3 - 5 Hours',
     createdAt: '2026-01-01T00:00:00.000Z',
     updatedAt: '2026-01-01T00:00:00.000Z',
   },
@@ -148,6 +164,10 @@ export const servicesService = {
       description: payload.description?.trim() || '',
       contactInfo: payload.contactInfo?.trim() || '',
       status: payload.status,
+      baseCharge: payload.baseCharge?.trim() || '₹2,000',
+      hourlyRate: payload.hourlyRate?.trim() || '₹600/hr',
+      emergencySurcharge: payload.emergencySurcharge?.trim() || '₹1,000',
+      estimatedDuration: payload.estimatedDuration?.trim() || '2 - 4 Hours',
       createdAt: now,
       updatedAt: now,
     };

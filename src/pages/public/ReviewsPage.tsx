@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '@/routes/paths';
 import {
@@ -6,17 +6,15 @@ import {
   SectionHeading,
   Button,
   Badge,
+  EmptyState,
   Card,
   CardContent,
-  LoadingState,
-  EmptyState,
-  ErrorState,
 } from '@/components/common';
 import {
   ReviewCard,
-  ApprovedReviewData,
   ReviewSubmissionForm,
 } from '@/components/reviews';
+import { reviewsService, CustomerReview } from '@/services/reviewsService';
 import {
   Star,
   ShieldCheck,
@@ -29,35 +27,19 @@ import {
   Lock,
 } from 'lucide-react';
 
-/* ==========================================================================
- * VERIFIED REVIEWS DATA SCHEMA
- * --------------------------------------------------------------------------
- * Structured data models ready for backend API integration.
- * IMPORTANT: No fake reviews or invented ratings are displayed by default.
- * Reviews are published only upon formal administrative approval.
- * ========================================================================== */
-
-// Sample approved review structure for demonstration/preview purposes
-// showing how verified records render once approved by the backend administrator.
-const SAMPLE_APPROVED_REVIEW: ApprovedReviewData = {
-  id: 'rev-sample-01',
-  customerName: 'Senior Production Head',
-  companyName: 'Regional Grain Processing Facility',
-  sector: 'Rice Milling Sector',
-  rating: 5,
-  serviceRecordId: 'WO-2026-081',
-  serviceCategory: 'Rice Mill Machinery Overhaul',
-  reviewDate: 'Verified Completion Record on File',
-  title: 'Accurate dynamic balancing and prompt pre-harvest line restoration',
-  comment:
-    'Our elevator drive and polisher blower developed severe bearing vibration during peak harvest milling. VPE engineers arrived on-site with diagnostic instrumentation, replaced the damaged bearings, and restored dynamic balance without extended line stoppage.',
-  status: 'Approved',
-};
-
 export const ReviewsPage: FC = () => {
-  // State switcher demonstrating Empty (Current Production Reality), Sample Approved,
-  // Loading, and Error states for future API hook integration.
-  const [viewState, setViewState] = useState<'empty' | 'sample' | 'loading' | 'error'>('empty');
+  const [approvedReviews, setApprovedReviews] = useState<CustomerReview[]>(() =>
+    reviewsService.getApprovedReviews()
+  );
+
+  useEffect(() => {
+    setApprovedReviews(reviewsService.getApprovedReviews());
+  }, []);
+
+  const handleReviewSubmitted = (payload: any) => {
+    reviewsService.submitReview(payload);
+    setApprovedReviews(reviewsService.getApprovedReviews());
+  };
 
   return (
     <>
@@ -236,51 +218,31 @@ export const ReviewsPage: FC = () => {
                 Independent feedback submitted by verified plant clients and approved by administration.
               </p>
             </div>
-
-            {/* API Integration State Switcher for Future Backend Wiring */}
-            <div className="flex items-center gap-1.5 bg-white p-1 rounded-lg border border-slate-200 text-xs font-semibold self-start sm:self-auto shadow-xs">
-              <span className="text-[11px] text-slate-500 px-2 font-mono uppercase">API View Mode:</span>
-              <button
-                type="button"
-                onClick={() => setViewState('empty')}
-                className={`px-2.5 py-1 rounded transition-colors ${
-                  viewState === 'empty' ? 'bg-slate-900 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                Production Empty (Current)
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewState('sample')}
-                className={`px-2.5 py-1 rounded transition-colors ${
-                  viewState === 'sample' ? 'bg-slate-900 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                Sample Approved Layout
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewState('loading')}
-                className={`px-2.5 py-1 rounded transition-colors ${
-                  viewState === 'loading' ? 'bg-slate-900 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                Loading
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewState('error')}
-                className={`px-2.5 py-1 rounded transition-colors ${
-                  viewState === 'error' ? 'bg-slate-900 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                Error
-              </button>
-            </div>
           </div>
 
-          {/* 1. Production Default Empty State (True Current Production Reality) */}
-          {viewState === 'empty' && (
+          {/* Approved Reviews Directory */}
+          {approvedReviews.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {approvedReviews.map((rev) => (
+                <ReviewCard
+                  key={rev.id}
+                  review={{
+                    id: rev.id,
+                    customerName: rev.customerName,
+                    companyName: rev.companyName,
+                    sector: rev.serviceCategory,
+                    rating: rev.rating,
+                    serviceRecordId: rev.serviceRecordId,
+                    serviceCategory: rev.serviceCategory,
+                    reviewDate: new Date(rev.createdAt).toLocaleDateString(),
+                    title: rev.title,
+                    comment: rev.feedback,
+                    status: 'Approved',
+                  }}
+                />
+              ))}
+            </div>
+          ) : (
             <div className="py-8 max-w-xl mx-auto">
               <EmptyState
                 icon={<Star className="w-8 h-8 text-amber-600" />}
@@ -292,53 +254,6 @@ export const ReviewsPage: FC = () => {
                       Submit First Review
                     </Button>
                   </a>
-                }
-              />
-            </div>
-          )}
-
-          {/* 2. Sample Approved Card Layout (Demonstrating UI once backend publishes reviews) */}
-          {viewState === 'sample' && (
-            <div className="space-y-6">
-              <div className="bg-amber-50/70 border border-amber-200/80 rounded-xl p-4 text-xs text-amber-900 flex items-center justify-between gap-4">
-                <span>
-                  <strong>Developer Preview:</strong> Demonstrating how approved customer reviews render once published from the database.
-                </span>
-                <Button variant="outline" size="sm" onClick={() => setViewState('empty')}>
-                  Return to Production View
-                </Button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <ReviewCard review={SAMPLE_APPROVED_REVIEW} />
-              </div>
-            </div>
-          )}
-
-          {/* 3. Loading State for Future API Hook */}
-          {viewState === 'loading' && (
-            <div className="py-12">
-              <LoadingState
-                message="Retrieving Approved Customer Reviews..."
-                description="Querying the verified feedback database and administrative approval registry."
-              />
-            </div>
-          )}
-
-          {/* 4. Error State for Future API Hook */}
-          {viewState === 'error' && (
-            <div className="py-12 max-w-xl mx-auto">
-              <ErrorState
-                title="Unable to Retrieve Reviews"
-                message="A connection error occurred while querying the review database. Please verify network connectivity or try again later."
-                onRetry={() => setViewState('empty')}
-                retryLabel="Reset View"
-                action={
-                  <Link to={ROUTES.PUBLIC.CONTACT}>
-                    <Button variant="outline" size="md">
-                      Contact Operations
-                    </Button>
-                  </Link>
                 }
               />
             </div>
@@ -359,7 +274,7 @@ export const ReviewsPage: FC = () => {
             align="center"
           />
 
-          <ReviewSubmissionForm />
+          <ReviewSubmissionForm onSuccess={handleReviewSubmitted} />
         </Container>
       </section>
 

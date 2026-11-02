@@ -203,6 +203,7 @@ export const CustomerRegisterForm: FC<CustomerRegisterFormProps> = ({
         phone: payload.mobile,
         company: payload.companyName,
         location: payload.location,
+        industry: payload.industry,
         password: payload.password,
       });
 

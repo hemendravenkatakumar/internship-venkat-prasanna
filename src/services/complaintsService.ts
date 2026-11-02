@@ -6,8 +6,15 @@
 
 import { storageService } from './storageService';
 import { emailService } from './emailService';
+import { notificationsService } from './notificationsService';
 
-export type ComplaintStatus = 'Submitted' | 'Under Review' | 'In Progress' | 'Resolved';
+export type ComplaintStatus =
+  | 'Submitted'
+  | 'Under Review'
+  | 'Scheduled'
+  | 'In Progress'
+  | 'Completed'
+  | 'Resolved';
 
 export interface StatusHistoryEntry {
   id: string;
@@ -22,15 +29,23 @@ export interface ComplaintRecord {
   token: string;
   userId: string;
   userName: string;
+  companyName: string;
+  contactPerson: string;
   userEmail: string;
   userPhone: string;
+  industryType: string;
   title: string;
   category: string;
   description: string;
+  problemStartDate: string;
   location: string;
   images: string[];
+  attachments?: { name: string; url: string; type: string }[];
   voiceRecording: string | null;
   status: ComplaintStatus;
+  scheduledDate?: string;
+  assignedEngineer?: string;
+  serviceRecordId?: string;
   adminRemarks: string;
   remarksHistory: StatusHistoryEntry[];
   emailStatus: {
@@ -47,13 +62,18 @@ export interface ComplaintRecord {
 export interface NewComplaintPayload {
   userId: string;
   userName: string;
+  companyName?: string;
+  contactPerson?: string;
   userEmail: string;
   userPhone: string;
+  industryType?: string;
   title: string;
   category: string;
   description: string;
+  problemStartDate?: string;
   location: string;
   images?: string[];
+  attachments?: { name: string; url: string; type: string }[];
   voiceRecording?: string | null;
 }
 
@@ -61,7 +81,9 @@ export interface ComplaintStats {
   total: number;
   submitted: number;
   underReview: number;
+  scheduled: number;
   inProgress: number;
+  completed: number;
   resolved: number;
 }
 
@@ -73,23 +95,30 @@ const STORAGE_KEY_COMPLAINTS = 'reliefnet_complaints_data';
 const INITIAL_COMPLAINTS: ComplaintRecord[] = [
   {
     id: 'cmp-seed-01',
-    token: 'RN-2026-0001',
+    token: 'VPE-SR-2026-0001',
     userId: 'usr-client-01',
     userName: 'Venkat Prasanna',
+    companyName: 'Prasanna Agro Industries Ltd.',
+    contactPerson: 'Venkat Prasanna',
     userEmail: 'user@reliefnet.com',
     userPhone: '+91 98765 01234',
+    industryType: 'Rice Milling & Grain Processing',
     title: 'Sortex Machine Optical Sensor Failure in Unit 2',
     category: 'Equipment Breakdown',
     description:
       'Optical grading sensors on Sortex line 2 are producing intermittent error code E-402, causing automatic shutoff during paddy sorting. Cleaned lens surfaces, but calibration fault persists.',
+    problemStartDate: '2026-10-15',
     location: 'Rice Processing Mill, Shed B, Tadepalligudem, AP',
     images: [
       'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80',
     ],
     voiceRecording: null,
-    status: 'In Progress',
+    status: 'Completed',
+    scheduledDate: '2026-10-18',
+    assignedEngineer: 'K. Srinivas (Lead Automation & Sortex Specialist)',
+    serviceRecordId: 'ESR-2026-0001',
     adminRemarks:
-      'Field engineer dispatched with replacement optical calibration module. Estimated completion by 4:00 PM.',
+      'Service completed on-site. Optical sensor module replaced and sorting calibration certified.',
     remarksHistory: [
       {
         id: 'rem-1',
@@ -100,17 +129,17 @@ const INITIAL_COMPLAINTS: ComplaintRecord[] = [
       },
       {
         id: 'rem-2',
-        status: 'Under Review',
-        remark: 'Triage complete. Assigned to senior electronic technician.',
-        timestamp: '2026-10-15T11:00:00.000Z',
-        author: 'Operations Admin',
+        status: 'Scheduled',
+        remark: 'Visit scheduled for 2026-10-18 with Senior Engineer K. Srinivas.',
+        timestamp: '2026-10-16T11:00:00.000Z',
+        author: 'Owner & Admin',
       },
       {
         id: 'rem-3',
-        status: 'In Progress',
-        remark: 'Field engineer dispatched with replacement optical calibration module.',
-        timestamp: '2026-10-16T08:30:00.000Z',
-        author: 'Operations Admin',
+        status: 'Completed',
+        remark: 'Inspection findings and repair executed. Work order closed.',
+        timestamp: '2026-10-18T16:30:00.000Z',
+        author: 'K. Srinivas',
       },
     ],
     emailStatus: {
@@ -120,64 +149,77 @@ const INITIAL_COMPLAINTS: ComplaintRecord[] = [
       attempts: 1,
     },
     createdAt: '2026-10-15T09:30:00.000Z',
-    updatedAt: '2026-10-16T08:30:00.000Z',
+    updatedAt: '2026-10-18T16:30:00.000Z',
   },
   {
     id: 'cmp-seed-02',
-    token: 'RN-2026-0002',
+    token: 'VPE-SR-2026-0002',
     userId: 'usr-client-01',
     userName: 'Venkat Prasanna',
+    companyName: 'Prasanna Agro Industries Ltd.',
+    contactPerson: 'Venkat Prasanna',
     userEmail: 'user@reliefnet.com',
     userPhone: '+91 98765 01234',
+    industryType: 'Rice Milling & Grain Processing',
     title: 'Main Hydraulic Pump Pressure Drop on Elevator Conveyor',
     category: 'Mechanical Jam / Failure',
     description:
       'Primary hydraulic pressure dropped from 180 bar to 60 bar under full bucket elevator load. Suspect seal failure or valve bypass on main manifold.',
+    problemStartDate: '2026-10-22',
     location: 'Grain Silo Intake Station 1, Tadepalligudem, AP',
     images: [],
     voiceRecording: null,
-    status: 'Under Review',
+    status: 'Scheduled',
+    scheduledDate: '2026-11-04',
+    assignedEngineer: 'M. Venkatesh (Hydraulics & Heavy Mechanical)',
     adminRemarks: 'Technical team reviewing hydraulic schematic before on-site dispatch.',
     remarksHistory: [
       {
         id: 'rem-4',
         status: 'Submitted',
         remark: 'Complaint registered by user.',
-        timestamp: '2026-10-16T14:15:00.000Z',
+        timestamp: '2026-10-22T14:15:00.000Z',
         author: 'System',
       },
       {
         id: 'rem-5',
-        status: 'Under Review',
-        remark: 'Technical team reviewing hydraulic schematic before on-site dispatch.',
-        timestamp: '2026-10-16T15:00:00.000Z',
-        author: 'Operations Admin',
+        status: 'Scheduled',
+        remark: 'Service visit scheduled for Nov 04, 2026. Lead engineer assigned.',
+        timestamp: '2026-10-23T10:00:00.000Z',
+        author: 'Owner & Admin',
       },
     ],
     emailStatus: {
       sent: true,
-      sentAt: '2026-10-16T14:15:05.000Z',
+      sentAt: '2026-10-22T14:15:05.000Z',
       recipient: 'admin@reliefnet.com',
       attempts: 1,
     },
-    createdAt: '2026-10-16T14:15:00.000Z',
-    updatedAt: '2026-10-16T15:00:00.000Z',
+    createdAt: '2026-10-22T14:15:00.000Z',
+    updatedAt: '2026-10-23T10:00:00.000Z',
   },
   {
     id: 'cmp-seed-03',
-    token: 'RN-2026-0003',
+    token: 'VPE-SR-2026-0003',
     userId: 'usr-client-02',
-    userName: 'East Godavari Mills Co.',
+    userName: 'S. Ramakrishna',
+    companyName: 'East Godavari Mills Co.',
+    contactPerson: 'S. Ramakrishna',
     userEmail: 'ops@eastgodavarimills.com',
     userPhone: '+91 98480 22334',
+    industryType: 'Agro-Industrial Processing',
     title: 'Emergency Generator Automatic Transfer Switch (ATS) Tripping',
     category: 'Power & Electrical Failure',
     description:
       'Auxiliary 250 kVA diesel generator ATS trips when switching loads from grid power. Auxiliary contactor replaced and verified operational.',
+    problemStartDate: '2026-10-13',
     location: 'Substation Control Room, Rajahmundry Industrial Zone',
     images: [],
     voiceRecording: null,
-    status: 'Resolved',
+    status: 'Completed',
+    scheduledDate: '2026-10-14',
+    assignedEngineer: 'M. Venkatesh (Senior Electrical Systems Engineer)',
+    serviceRecordId: 'ESR-2026-0002',
     adminRemarks: 'Auxiliary contactor and timing relay calibrated. Full load trial test verified and approved.',
     remarksHistory: [
       {
@@ -189,10 +231,10 @@ const INITIAL_COMPLAINTS: ComplaintRecord[] = [
       },
       {
         id: 'rem-7',
-        status: 'Resolved',
+        status: 'Completed',
         remark: 'Auxiliary contactor and timing relay calibrated. Full load trial test verified and approved.',
         timestamp: '2026-10-14T17:45:00.000Z',
-        author: 'Operations Admin',
+        author: 'Owner & Admin',
       },
     ],
     emailStatus: {
@@ -203,6 +245,44 @@ const INITIAL_COMPLAINTS: ComplaintRecord[] = [
     },
     createdAt: '2026-10-14T10:00:00.000Z',
     updatedAt: '2026-10-14T17:45:00.000Z',
+  },
+  {
+    id: 'cmp-seed-04',
+    token: 'VPE-SR-2026-0004',
+    userId: 'usr-client-01',
+    userName: 'Venkat Prasanna',
+    companyName: 'Prasanna Agro Industries Ltd.',
+    contactPerson: 'Venkat Prasanna',
+    userEmail: 'user@reliefnet.com',
+    userPhone: '+91 98765 01234',
+    industryType: 'Rice Milling & Grain Processing',
+    title: 'Pre-Cleaner Vibratory Sieve Bearing Vibration Exceeding 4.5 mm/s',
+    category: 'Equipment Breakdown',
+    description:
+      'Excessive vibration detected on the drive pulley side of the grain pre-cleaning sieve. Lubrication performed but high-frequency bearing hum remains.',
+    problemStartDate: '2026-10-26',
+    location: 'Intake Bay Elevator 2, Tadepalligudem, AP',
+    images: [],
+    voiceRecording: null,
+    status: 'Submitted',
+    adminRemarks: 'Pending triage and visit scheduling.',
+    remarksHistory: [
+      {
+        id: 'rem-8',
+        status: 'Submitted',
+        remark: 'Service request registered via customer portal.',
+        timestamp: '2026-10-26T08:00:00.000Z',
+        author: 'Venkat Prasanna',
+      },
+    ],
+    emailStatus: {
+      sent: true,
+      sentAt: '2026-10-26T08:00:05.000Z',
+      recipient: 'admin@reliefnet.com',
+      attempts: 1,
+    },
+    createdAt: '2026-10-26T08:00:00.000Z',
+    updatedAt: '2026-10-26T08:00:00.000Z',
   },
 ];
 
@@ -249,14 +329,16 @@ export const complaintsService = {
       total: all.length,
       submitted: all.filter((c) => c.status === 'Submitted').length,
       underReview: all.filter((c) => c.status === 'Under Review').length,
+      scheduled: all.filter((c) => c.status === 'Scheduled').length,
       inProgress: all.filter((c) => c.status === 'In Progress').length,
-      resolved: all.filter((c) => c.status === 'Resolved').length,
+      completed: all.filter((c) => c.status === 'Completed' || c.status === 'Resolved').length,
+      resolved: all.filter((c) => c.status === 'Completed' || c.status === 'Resolved').length,
     };
   },
 
   /**
-   * Submits a new complaint, generates token RN-2026-XXXX, saves persistently,
-   * and triggers fail-safe email dispatch.
+   * Submits a new service request, generates token VPE-SR-2026-XXXX, saves persistently,
+   * dispatches in-app notification to Owner/Admin, and triggers fail-safe email dispatch.
    */
   async submitComplaint(payload: NewComplaintPayload): Promise<ComplaintRecord> {
     const token = storageService.generateComplaintToken();
@@ -267,13 +349,18 @@ export const complaintsService = {
       token,
       userId: payload.userId,
       userName: payload.userName,
+      companyName: payload.companyName || 'Industrial Client',
+      contactPerson: payload.contactPerson || payload.userName,
       userEmail: payload.userEmail,
       userPhone: payload.userPhone,
+      industryType: payload.industryType || 'Industrial Processing',
       title: payload.title.trim(),
       category: payload.category,
       description: payload.description.trim(),
+      problemStartDate: payload.problemStartDate || now.split('T')[0],
       location: payload.location.trim(),
       images: payload.images || [],
+      attachments: payload.attachments || [],
       voiceRecording: payload.voiceRecording || null,
       status: 'Submitted',
       adminRemarks: '',
@@ -281,7 +368,7 @@ export const complaintsService = {
         {
           id: `rem-${Date.now()}`,
           status: 'Submitted',
-          remark: 'Complaint registered by user in portal.',
+          remark: 'Service request registered by client in portal.',
           timestamp: now,
           author: payload.userName,
         },
@@ -300,7 +387,15 @@ export const complaintsService = {
     all.unshift(newRecord);
     storageService.setItem(STORAGE_KEY_COMPLAINTS, all);
 
-    // 2. DISPATCH EMAIL NOTIFICATION
+    // 2. DISPATCH NOTIFICATION TO OWNER & ADMIN
+    notificationsService.notifyNewServiceRequest({
+      token: newRecord.token,
+      companyName: newRecord.companyName,
+      contactPerson: newRecord.contactPerson,
+      machineIssue: newRecord.description || newRecord.title,
+    });
+
+    // 3. DISPATCH EMAIL NOTIFICATION
     try {
       const emailResult = await emailService.sendComplaintNotification({
         token: newRecord.token,
@@ -336,13 +431,60 @@ export const complaintsService = {
   },
 
   /**
+   * Sets service visit date and assigns certified field engineer (Scheduling module)
+   */
+  scheduleService(
+    idOrToken: string,
+    scheduledDate: string,
+    assignedEngineer: string,
+    notes?: string,
+    author: string = 'Owner & Admin'
+  ): ComplaintRecord | undefined {
+    const all = this.getComplaints();
+    const index = all.findIndex((c) => c.id === idOrToken || c.token === idOrToken);
+    if (index === -1) return undefined;
+
+    const target = all[index];
+    const now = new Date().toISOString();
+
+    target.status = 'Scheduled';
+    target.scheduledDate = scheduledDate;
+    target.assignedEngineer = assignedEngineer;
+    if (notes && notes.trim()) {
+      target.adminRemarks = notes.trim();
+    }
+    target.updatedAt = now;
+
+    target.remarksHistory.push({
+      id: `rem-${Date.now()}`,
+      status: 'Scheduled',
+      remark: notes?.trim() || `Visit scheduled for ${scheduledDate} with Engineer ${assignedEngineer}.`,
+      timestamp: now,
+      author,
+    });
+
+    storageService.setItem(STORAGE_KEY_COMPLAINTS, all);
+
+    // Notify customer about the scheduled visit
+    notificationsService.notifySchedulingUpdate({
+      token: target.token,
+      userId: target.userId,
+      scheduledDate,
+      engineerName: assignedEngineer,
+    });
+
+    return target;
+  },
+
+  /**
    * Updates complaint status, appends admin remarks, and records audit trail
    */
   updateComplaintStatus(
     idOrToken: string,
     newStatus: ComplaintStatus,
     adminRemarks?: string,
-    author: string = 'Operations Admin'
+    author: string = 'Owner & Admin',
+    serviceRecordId?: string
   ): ComplaintRecord | undefined {
     const all = this.getComplaints();
     const index = all.findIndex((c) => c.id === idOrToken || c.token === idOrToken);
@@ -356,6 +498,9 @@ export const complaintsService = {
     if (adminRemarks && adminRemarks.trim()) {
       target.adminRemarks = adminRemarks.trim();
     }
+    if (serviceRecordId) {
+      target.serviceRecordId = serviceRecordId;
+    }
     target.updatedAt = now;
 
     // Append to audit trail
@@ -368,6 +513,17 @@ export const complaintsService = {
     });
 
     storageService.setItem(STORAGE_KEY_COMPLAINTS, all);
+
+    // If completed or resolved, notify customer
+    if (newStatus === 'Completed' || newStatus === 'Resolved') {
+      notificationsService.notifyCompletion({
+        token: target.token,
+        userId: target.userId,
+        engineerName: target.assignedEngineer || author,
+        statusSummary: adminRemarks || 'Machine maintenance completed.',
+      });
+    }
+
     return target;
   },
 

@@ -15,6 +15,7 @@ export interface UserProfile {
   role: UserRole;
   company: string;
   location: string;
+  industry?: string;
   avatar?: string;
   joinedAt: string;
 }
@@ -32,12 +33,13 @@ const STORAGE_KEY_ACCOUNTS = 'reliefnet_user_accounts';
 const DEFAULT_ACCOUNTS: StoredUserAccount[] = [
   {
     id: 'usr-admin-01',
-    name: 'Operations Admin',
+    name: 'VPE Owner & Administration',
     email: 'admin@reliefnet.com',
     phone: '+91 98765 43210',
     role: 'admin',
-    company: 'ReliefNet & VPE Headquarters',
+    company: 'Venkata Prasanna Enterprises (HQ)',
     location: 'Tadepalligudem, AP',
+    industry: 'Industrial Plant Operations & Engineering',
     passwordHash: 'admin123',
     joinedAt: '2026-01-01T00:00:00.000Z',
   },
@@ -48,9 +50,22 @@ const DEFAULT_ACCOUNTS: StoredUserAccount[] = [
     phone: '+91 98765 01234',
     role: 'user',
     company: 'Prasanna Agro Industries Ltd.',
-    location: 'Tadepalligudem, AP',
+    location: 'Tadepalligudem Industrial Zone, AP',
+    industry: 'Rice Milling & Grain Processing',
     passwordHash: 'user123',
     joinedAt: '2026-02-15T00:00:00.000Z',
+  },
+  {
+    id: 'usr-client-02',
+    name: 'S. Ramakrishna',
+    email: 'ops@eastgodavarimills.com',
+    phone: '+91 98480 22334',
+    role: 'user',
+    company: 'East Godavari Mills Co.',
+    location: 'Rajahmundry Industrial Zone, AP',
+    industry: 'Agro-Industrial Processing',
+    passwordHash: 'client123',
+    joinedAt: '2026-03-01T00:00:00.000Z',
   },
 ];
 
@@ -101,12 +116,22 @@ export const authService = {
     );
 
     if (!account) {
-      // Quick fallback for demo accounts if user entered just "admin" or "user"
-      if (cleanId === 'admin' && (password === 'admin123' || password === 'admin')) {
+      // Quick fallback for demo accounts if user entered "admin" or "owner"
+      if (
+        (cleanId === 'admin' || cleanId === 'owner') &&
+        (password === 'admin123' || password === 'admin' || password === 'owner' || password === 'owner123')
+      ) {
         const adminAcc = accounts.find((a) => a.role === 'admin') || DEFAULT_ACCOUNTS[0];
         const { passwordHash: _, ...profile } = adminAcc;
         storageService.setItem(STORAGE_KEY_SESSION, profile);
         return { success: true, user: profile, redirectUrl: '/admin/dashboard' };
+      }
+
+      if (cleanId === 'user' && (password === 'user123' || password === 'user')) {
+        const userAcc = accounts.find((a) => a.role === 'user') || DEFAULT_ACCOUNTS[1];
+        const { passwordHash: _, ...profile } = userAcc;
+        storageService.setItem(STORAGE_KEY_SESSION, profile);
+        return { success: true, user: profile, redirectUrl: '/customer/dashboard' };
       }
 
       return {
@@ -146,6 +171,7 @@ export const authService = {
     phone: string;
     company: string;
     location: string;
+    industry?: string;
     password: string;
   }): UserProfile {
     const accounts = this.getAccounts();
@@ -156,6 +182,7 @@ export const authService = {
       phone: payload.phone,
       company: payload.company,
       location: payload.location,
+      industry: payload.industry || 'Industrial Manufacturing',
       role: 'user',
       passwordHash: payload.password,
       joinedAt: new Date().toISOString(),
