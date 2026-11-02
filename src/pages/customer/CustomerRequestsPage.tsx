@@ -23,7 +23,6 @@ import {
   Volume2,
   Check,
   FileText,
-  Activity,
 } from 'lucide-react';
 
 export const CustomerRequestsPage: React.FC = () => {
@@ -83,32 +82,6 @@ export const CustomerRequestsPage: React.FC = () => {
         return 'default';
     }
   };
-
-  const getTrackingStage = (status: ComplaintStatus): number => {
-    switch (status) {
-      case 'Submitted':
-        return 1;
-      case 'Under Review':
-        return 2;
-      case 'Scheduled':
-        return 3;
-      case 'In Progress':
-        return 4;
-      case 'Completed':
-      case 'Resolved':
-        return 5;
-      default:
-        return 1;
-    }
-  };
-
-  const trackingSteps = [
-    { step: 1, label: t('customer.tracking_step_1') },
-    { step: 2, label: t('customer.tracking_step_2') },
-    { step: 3, label: t('customer.tracking_step_3') },
-    { step: 4, label: t('customer.tracking_step_4') },
-    { step: 5, label: t('customer.tracking_step_5') },
-  ];
 
   const handleOpenRecord = (complaint: ComplaintRecord) => {
     const rec =
@@ -321,56 +294,6 @@ export const CustomerRequestsPage: React.FC = () => {
                 <p className="text-slate-500">
                   Location: {selectedComplaint.location} • Problem Started: {selectedComplaint.problemStartDate}
                 </p>
-              </div>
-
-              {/* Milestone Tracking Stepper */}
-              <div className="p-4 bg-slate-900 text-white rounded-xl space-y-3">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
-                    <Activity className="w-3.5 h-3.5" />
-                    <span>Issue Progress Tracking</span>
-                  </span>
-                  <span className="font-mono text-slate-400">
-                    Step {getTrackingStage(selectedComplaint.status)} of 5 ({getTrackingStage(selectedComplaint.status) * 20}%)
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-5 gap-1.5 pt-1">
-                  {trackingSteps.map((s) => {
-                    const current = getTrackingStage(selectedComplaint.status);
-                    const isDone = current > s.step || (current === 5 && s.step === 5);
-                    const isCurrent = current === s.step;
-                    return (
-                      <div
-                        key={s.step}
-                        className={`p-2 rounded-lg text-center border transition-all ${
-                          isDone
-                            ? 'bg-emerald-950/40 border-emerald-500/50 text-emerald-300'
-                            : isCurrent
-                            ? 'bg-amber-950/50 border-amber-400 text-amber-300 font-bold'
-                            : 'bg-slate-800/40 border-slate-700/50 text-slate-500'
-                        }`}
-                      >
-                        <div className="flex items-center justify-center mb-1">
-                          <span
-                            className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
-                              isDone
-                                ? 'bg-emerald-500 text-slate-950'
-                                : isCurrent
-                                ? 'bg-amber-400 text-slate-950'
-                                : 'bg-slate-700 text-slate-400'
-                            }`}
-                          >
-                            {isDone ? <Check className="w-3 h-3 stroke-[3]" /> : s.step}
-                          </span>
-                        </div>
-                        <span className="text-[10px] block leading-tight truncate" title={s.label}>
-                          {s.label}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
               </div>
 
               {/* Scheduled Visit Card */}
