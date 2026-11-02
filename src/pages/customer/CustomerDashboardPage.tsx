@@ -3,7 +3,7 @@ import { Link, Navigate } from 'react-router-dom';
 import { ROUTES } from '@/routes/paths';
 import { Card, CardHeader, CardContent, Button, Badge } from '@/components/common';
 import { authService, UserProfile } from '@/services/authService';
-import { complaintsService, ComplaintRecord } from '@/services/complaintsService';
+import { complaintsService, ComplaintRecord, ComplaintStatus } from '@/services/complaintsService';
 import { servicesService, ServiceRecord } from '@/services/servicesService';
 import { engineerRecordsService, EngineerServiceRecord } from '@/services/engineerRecordsService';
 import { notificationsService, NotificationItem } from '@/services/notificationsService';
@@ -27,6 +27,10 @@ import {
   X,
   Bell,
   Cpu,
+  Activity,
+  Search,
+  Volume2,
+  Check,
 } from 'lucide-react';
 
 export const CustomerDashboardPage: React.FC = () => {
@@ -49,6 +53,9 @@ export const CustomerDashboardPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'active' | 'history'>('active');
   const [selectedRecord, setSelectedRecord] = useState<EngineerServiceRecord | null>(null);
   const [lastRefreshed, setLastRefreshed] = useState<string>(() => new Date().toLocaleTimeString());
+  const [trackedIssueId, setTrackedIssueId] = useState<string>('');
+  const [trackSearchQuery, setTrackSearchQuery] = useState<string>('');
+  const [enlargedImage, setEnlargedImage] = useState<string | null>(null);
 
   const loadData = useCallback(() => {
     const user = authService.getCurrentUser();
@@ -122,6 +129,91 @@ export const CustomerDashboardPage: React.FC = () => {
       });
     }
   };
+
+  // Determine tracked issue (defaults to active request or first available request)
+  const trackedComplaint =
+    complaints.find(
+      (c) =>
+        c.id === trackedIssueId ||
+        (trackSearchQuery.trim() &&
+          c.token.toLowerCase() === trackSearchQuery.trim().toLowerCase())
+    ) ||
+    complaints.find((c) => c.id === trackedIssueId) ||
+    activeRequests[0] ||
+    complaints[0] ||
+    null;
+
+  const handleTrackIssue = (complaintId: string) => {
+    setTrackedIssueId(complaintId);
+    const element = document.getElementById('issue-tracker-section');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const getTrackingStage = (status: ComplaintStatus): number => {
+    switch (status) {
+      case 'Submitted':
+        return 1;
+      case 'Under Review':
+        return 2;
+      case 'Scheduled':
+        return 3;
+      case 'In Progress':
+        return 4;
+      case 'Completed':
+      case 'Resolved':
+        return 5;
+      default:
+        return 1;
+    }
+  };
+
+  const getStatusBadgeVariant = (
+    status: ComplaintStatus
+  ): 'default' | 'amber' | 'success' | 'danger' | 'info' => {
+    switch (status) {
+      case 'Completed':
+      case 'Resolved':
+        return 'success';
+      case 'Scheduled':
+        return 'info';
+      case 'In Progress':
+        return 'amber';
+      case 'Under Review':
+        return 'info';
+      default:
+        return 'default';
+    }
+  };
+
+  const trackingSteps = [
+    {
+      step: 1,
+      label: t('customer.tracking_step_1'),
+      desc: 'Issue registered in VPE dispatch queue',
+    },
+    {
+      step: 2,
+      label: t('customer.tracking_step_2'),
+      desc: 'Engineering triage & spare parts preparation',
+    },
+    {
+      step: 3,
+      label: t('customer.tracking_step_3'),
+      desc: 'Visit date confirmed & specialist assigned',
+    },
+    {
+      step: 4,
+      label: t('customer.tracking_step_4'),
+      desc: 'On-site technical overhaul & component testing',
+    },
+    {
+      step: 5,
+      label: t('customer.tracking_step_5'),
+      desc: 'Certified Engineer Service Record issued',
+    },
+  ];
 
   return (
     <div className="space-y-8">
@@ -267,6 +359,305 @@ export const CustomerDashboardPage: React.FC = () => {
         </Card>
       </div>
 
+      {/* ============================================================ */}
+      {/* LIVE MACHINE ISSUE TRACKER SECTION */}
+      {/* ============================================================ */}
+      <div id="issue-tracker-section" className="scroll-mt-6">
+        <div className="border border-slate-800 bg-slate-900 text-white rounded-2xl shadow-xl overflow-hidden">
+          {/* Header */}
+          <div className="p-5 sm:p-6 border-b border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-[11px] font-mono uppercase tracking-wider text-amber-400 font-bold">
+                  Live Issue Tracking System
+                </span>
+                <span className="text-xs text-slate-600">|</span>
+                <span className="text-xs text-slate-300 font-mono">
+                  {trackedComplaint ? trackedComplaint.token : 'No Issue Selected'}
+                </span>
+              </div>
+              <h2 className="text-lg sm:text-xl font-black text-white flex items-center gap-2">
+                <Activity className="w-5 h-5 text-amber-400" />
+                <span>{t('customer.tracker_title')}</span>
+              </h2>
+              <p className="text-xs text-slate-400">
+                {t('customer.tracker_subtitle')}
+              </p>
+            </div>
+
+            {/* Quick Selector Dropdown & Search */}
+            {complaints.length > 0 && (
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                <div className="relative min-w-[240px]">
+                  <select
+                    value={trackedComplaint ? trackedComplaint.id : ''}
+                    onChange={(e) => setTrackedIssueId(e.target.value)}
+                    className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-lg px-3 py-2 pr-8 focus:outline-hidden focus:border-amber-400 cursor-pointer appearance-none"
+                  >
+                    {complaints.map((c) => (
+                      <option key={c.id} value={c.id} className="bg-slate-900 text-white">
+                        {c.token} - {c.title.slice(0, 30)} ({c.status})
+                      </option>
+                    ))}
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400">
+                    <Search className="w-3.5 h-3.5" />
+                  </div>
+                </div>
+
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={trackSearchQuery}
+                    onChange={(e) => {
+                      setTrackSearchQuery(e.target.value);
+                      const found = complaints.find((c) =>
+                        c.token.toLowerCase().includes(e.target.value.trim().toLowerCase())
+                      );
+                      if (found) {
+                        setTrackedIssueId(found.id);
+                      }
+                    }}
+                    placeholder={t('customer.track_by_token')}
+                    className="bg-slate-800 border border-slate-700 text-white placeholder-slate-500 text-xs rounded-lg px-3 py-2 focus:outline-hidden focus:border-amber-400 font-mono w-full sm:w-48"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Content Body */}
+          {complaints.length === 0 ? (
+            <div className="p-8 text-center space-y-3">
+              <div className="w-12 h-12 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center mx-auto">
+                <Activity className="w-6 h-6" />
+              </div>
+              <h4 className="text-sm font-bold text-slate-200">No active machine issues reported</h4>
+              <p className="text-xs text-slate-400 max-w-sm mx-auto">
+                When you experience machine trouble, submit a service request to track technical triage, scheduling, on-site repairs, and certification in real time.
+              </p>
+              <div className="pt-2">
+                <Link to={ROUTES.CUSTOMER.SERVICE_REQUEST}>
+                  <Button variant="industrial" size="sm" leftIcon={<FilePlus className="w-4 h-4" />}>
+                    Submit Service Request
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          ) : trackedComplaint ? (
+            <div className="p-5 sm:p-6 space-y-6">
+              {/* Selected Issue Meta Card */}
+              <div className="p-4 rounded-xl bg-slate-800/80 border border-slate-700 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-mono text-xs font-bold bg-amber-400 text-slate-950 px-2.5 py-0.5 rounded shadow-xs">
+                      {trackedComplaint.token}
+                    </span>
+                    <Badge variant={getStatusBadgeVariant(trackedComplaint.status)}>
+                      {trackedComplaint.status}
+                    </Badge>
+                    <span className="text-xs text-slate-400">
+                      Problem Started: <strong className="text-slate-200">{trackedComplaint.problemStartDate || trackedComplaint.createdAt.split('T')[0]}</strong>
+                    </span>
+                    <span className="text-xs text-slate-600">•</span>
+                    <span className="text-xs text-slate-400">
+                      Facility: <strong className="text-slate-200">{trackedComplaint.location}</strong>
+                    </span>
+                  </div>
+                  <h3 className="text-base font-extrabold text-white">
+                    {trackedComplaint.title}
+                  </h3>
+                  <p className="text-xs text-slate-300 line-clamp-2">
+                    {trackedComplaint.description}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  {trackedComplaint.status === 'Completed' || trackedComplaint.status === 'Resolved' ? (
+                    <Button
+                      type="button"
+                      variant="industrial"
+                      size="sm"
+                      onClick={() => handleOpenEngineerRecord(trackedComplaint)}
+                      leftIcon={<FileText className="w-4 h-4" />}
+                    >
+                      {t('customer.view_report')}
+                    </Button>
+                  ) : (
+                    <div className="text-right">
+                      <span className="text-[11px] text-slate-400 block font-medium">Estimated Visit</span>
+                      <span className="text-xs font-bold text-amber-400">
+                        {trackedComplaint.scheduledDate ? trackedComplaint.scheduledDate : 'Pending Triage'}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Visual 5-Stage Milestone Progress Stepper */}
+              <div className="bg-slate-950/70 border border-slate-800 rounded-xl p-5 sm:p-6 space-y-5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                    Service Lifecycle Progress
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-mono font-bold text-amber-400">
+                      {getTrackingStage(trackedComplaint.status) * 20}% Complete
+                    </span>
+                    <div className="w-24 h-2 bg-slate-800 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-emerald-400 transition-all duration-500"
+                        style={{ width: `${getTrackingStage(trackedComplaint.status) * 20}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Stepper Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-5 gap-3 relative">
+                  {trackingSteps.map((stepItem) => {
+                    const currentStage = getTrackingStage(trackedComplaint.status);
+                    const isDone = currentStage > stepItem.step || (currentStage === 5 && stepItem.step === 5);
+                    const isCurrent = currentStage === stepItem.step;
+
+                    return (
+                      <div
+                        key={stepItem.step}
+                        className={`p-3.5 rounded-xl border transition-all ${
+                          isDone
+                            ? 'bg-emerald-950/30 border-emerald-500/40 text-emerald-300'
+                            : isCurrent
+                            ? 'bg-amber-950/40 border-amber-400 shadow-md text-amber-300 ring-1 ring-amber-400/50'
+                            : 'bg-slate-900/40 border-slate-800 text-slate-500'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <span
+                            className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-black ${
+                              isDone
+                                ? 'bg-emerald-500 text-slate-950'
+                                : isCurrent
+                                ? 'bg-amber-400 text-slate-950'
+                                : 'bg-slate-800 text-slate-400'
+                            }`}
+                          >
+                            {isDone ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : stepItem.step}
+                          </span>
+                          {isCurrent && (
+                            <span className="text-[10px] font-mono font-bold uppercase tracking-wider bg-amber-400/20 text-amber-300 px-1.5 py-0.5 rounded">
+                              Current
+                            </span>
+                          )}
+                          {isDone && (
+                            <span className="text-[10px] font-mono font-bold text-emerald-400">
+                              Completed
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="text-xs font-bold leading-tight">
+                          {stepItem.label}
+                        </div>
+                        <p className="text-[11px] text-slate-400 mt-1 leading-snug">
+                          {stepItem.desc}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Status Intelligence Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                {/* Panel 1: Technician & Scheduling */}
+                <div className="p-4 rounded-xl bg-slate-800/60 border border-slate-700/70 space-y-2.5">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                    <Calendar className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Scheduling & Dispatch</span>
+                  </span>
+                  <div>
+                    <span className="text-slate-400 block text-[11px]">On-Site Visit Date</span>
+                    <span className="font-bold text-white text-sm">
+                      {trackedComplaint.scheduledDate || 'To be confirmed by VPE admin'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 block text-[11px]">Assigned Specialist</span>
+                    <span className="font-bold text-amber-300 flex items-center gap-1">
+                      <User className="w-3.5 h-3.5" />
+                      <span>{trackedComplaint.assignedEngineer || 'VPE Technical Team'}</span>
+                    </span>
+                  </div>
+                  <div className="pt-2 border-t border-slate-700/60 text-[11px] text-slate-400 flex items-center gap-1">
+                    <Phone className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Emergency Hotline: +91 800-000-0000</span>
+                  </div>
+                </div>
+
+                {/* Panel 2: Operational Remarks & Diagnostics */}
+                <div className="p-4 rounded-xl bg-slate-800/60 border border-slate-700/70 space-y-2.5">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                    <Wrench className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Diagnostic & Engineering Remarks</span>
+                  </span>
+                  <div className="p-2.5 bg-slate-900/60 border border-slate-800 rounded-lg text-slate-300 leading-relaxed min-h-[64px]">
+                    {trackedComplaint.adminRemarks ||
+                      'Issue registered in high-priority industrial queue. Technical team reviewing machinery symptoms.'}
+                  </div>
+                  <div className="text-[11px] text-slate-400">
+                    Category: <strong className="text-slate-200">{trackedComplaint.category}</strong>
+                  </div>
+                </div>
+
+                {/* Panel 3: Voice Recording & Attachments */}
+                <div className="p-4 rounded-xl bg-slate-800/60 border border-slate-700/70 space-y-2.5">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                    <Volume2 className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Audio & Evidence Attached</span>
+                  </span>
+
+                  {trackedComplaint.voiceRecording ? (
+                    <div className="space-y-1.5">
+                      <span className="text-[11px] text-slate-400 block">Machine Fault Audio Recording:</span>
+                      <audio
+                        controls
+                        src={trackedComplaint.voiceRecording}
+                        className="w-full h-8 rounded"
+                      />
+                      <span className="text-[10px] text-emerald-400 block font-mono">
+                        ✓ Raw industrial audio stored (No speech-to-text)
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="text-[11px] text-slate-400 italic py-1">
+                      No voice recording attached to this ticket.
+                    </div>
+                  )}
+
+                  {trackedComplaint.images && trackedComplaint.images.length > 0 && (
+                    <div className="pt-2 border-t border-slate-700/60 space-y-1.5">
+                      <span className="text-[11px] text-slate-400 block">Inspection Photos ({trackedComplaint.images.length}):</span>
+                      <div className="flex items-center gap-2 overflow-x-auto">
+                        {trackedComplaint.images.map((img, idx) => (
+                          <div
+                            key={idx}
+                            onClick={() => setEnlargedImage(img)}
+                            className="w-12 h-12 rounded-lg border border-slate-700 overflow-hidden shrink-0 cursor-pointer hover:border-amber-400"
+                          >
+                            <img src={img} alt="Attachment" className="w-full h-full object-cover" />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          ) : null}
+        </div>
+      </div>
+
       {/* Main Tabbed Service Section: Active Requests vs Previous Service History */}
       <Card variant="default">
         <CardHeader className="border-b border-slate-100 pb-3">
@@ -382,7 +773,16 @@ export const CustomerDashboardPage: React.FC = () => {
                         )}
                       </div>
 
-                      <div className="flex items-center gap-2 shrink-0 self-start md:self-center">
+                      <div className="flex flex-wrap items-center gap-2 shrink-0 self-start md:self-center">
+                        <Button
+                          type="button"
+                          variant="industrial"
+                          size="sm"
+                          onClick={() => handleTrackIssue(item.id)}
+                          leftIcon={<Activity className="w-3.5 h-3.5" />}
+                        >
+                          {t('customer.track_issue')}
+                        </Button>
                         <Link to={ROUTES.CUSTOMER.REQUESTS}>
                           <Button variant="secondary" size="sm" rightIcon={<ArrowRight className="w-3.5 h-3.5" />}>
                             View Details
@@ -441,7 +841,16 @@ export const CustomerDashboardPage: React.FC = () => {
                         </div>
                       </div>
 
-                      <div className="shrink-0 self-start md:self-center">
+                      <div className="flex flex-wrap items-center gap-2 shrink-0 self-start md:self-center">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleTrackIssue(item.id)}
+                          leftIcon={<Activity className="w-3.5 h-3.5 text-amber-600" />}
+                        >
+                          {t('customer.track_issue')}
+                        </Button>
                         <Button
                           type="button"
                           variant="industrial"
@@ -650,6 +1059,25 @@ export const CustomerDashboardPage: React.FC = () => {
           ))}
         </div>
       </div>
+
+      {/* Lightbox for Zoomed Image */}
+      {enlargedImage && (
+        <div
+          className="fixed inset-0 z-60 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-4 cursor-pointer"
+          onClick={() => setEnlargedImage(null)}
+        >
+          <div className="relative max-w-4xl max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
+            <img src={enlargedImage} alt="Enlarged" className="max-w-full max-h-[90vh] rounded-lg shadow-2xl" />
+            <button
+              type="button"
+              onClick={() => setEnlargedImage(null)}
+              className="absolute top-3 right-3 p-1.5 rounded-full bg-slate-900/80 text-white hover:bg-slate-950 cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
