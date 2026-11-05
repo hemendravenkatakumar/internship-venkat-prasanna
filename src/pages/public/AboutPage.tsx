@@ -13,11 +13,11 @@ import {
   IndustrialImage,
 } from '@/components/common';
 import { INDUSTRIAL_IMAGES } from '@/config/images';
+import { useLanguage } from '@/context/LanguageContext';
 import {
   ArrowRight,
   Wrench,
   Phone,
-  Target,
   CheckCircle2,
   ShieldCheck,
   Clock,
@@ -30,27 +30,15 @@ import {
   Settings,
   CalendarCheck,
   AlertTriangle,
-  Factory,
+  Building2,
 } from 'lucide-react';
 
-/* ==========================================================================
- * ABOUT PAGE DATA
- * --------------------------------------------------------------------------
- * All content is structured as typed arrays/objects for easy CMS/backend
- * migration. When verified company content is supplied, update these values.
- *
- * IMPORTANT: No fabricated years of experience, qualifications,
- * certifications, client counts, awards, or revenue figures.
- * ========================================================================== */
-
-/**
- * Expertise areas with descriptions.
- * Update with verified specifics when available from VPE.
- */
 interface ExpertiseArea {
   id: string;
   title: string;
+  titleTe: string;
   description: string;
+  descriptionTe: string;
   icon: ReactNode;
 }
 
@@ -58,55 +46,71 @@ const EXPERTISE_AREAS: ExpertiseArea[] = [
   {
     id: 'mechanical',
     title: 'Mechanical Equipment Servicing',
+    titleTe: 'మెకానికల్ పరికరాల సర్వీసింగ్',
     description:
       'Hands-on repair, overhaul, and maintenance of motors, pumps, gearboxes, conveyors, and production line machinery across industrial plants.',
+    descriptionTe:
+      'మోటార్లు, పంపులు, గేర్‌బాక్స్‌లు, కన్వేయర్లు మరియు ఉత్పాదక లైన్ యంత్రాల ఆన్-సైట్ మరమ్మతులు మరియు నిర్వహణ.',
     icon: <Cog className="w-5 h-5" />,
   },
   {
     id: 'electrical',
     title: 'Electrical System Troubleshooting',
+    titleTe: 'ఎలక్ట్రికల్ సిస్టమ్ ట్రబుల్షూటింగ్',
     description:
       'Fault diagnosis, wiring repair, panel servicing, and electrical safety testing for industrial power distribution and control circuits.',
+    descriptionTe:
+      'పారిశ్రామిక విద్యుత్ నియంత్రణ ప్యానెల్స్, వైరింగ్ మరియు కంట్రోల్ సర్క్యూట్ల లోప నిర్ధారణ మరియు మరమ్మతులు.',
     icon: <Zap className="w-5 h-5" />,
   },
   {
     id: 'inspection',
     title: 'Equipment Inspection & Assessment',
+    titleTe: 'పరికరాల తనిఖీ & విశ్లేషణ',
     description:
       'Systematic condition evaluation to identify wear, damage, and potential failures before they cause unplanned production shutdowns.',
+    descriptionTe:
+      'ఉత్పాదక ఆగిపోకముందే అరుగుదల, లోపాలు మరియు వైఫల్యాలను గుర్తించే ముందస్తు శాస్త్రీయ తనిఖీ.',
     icon: <Search className="w-5 h-5" />,
   },
   {
     id: 'preventive',
     title: 'Preventive Maintenance Programs',
+    titleTe: 'నివారణ నిర్వహణ ప్రణాళికలు',
     description:
       'Structured maintenance schedules designed to extend equipment lifespan, reduce breakdown frequency, and maintain operational efficiency.',
+    descriptionTe:
+      'యంత్రాల జీవితకాలాన్ని పెంచడానికి మరియు బ్రేక్‌డౌన్‌లను నివారించడానికి క్రమబద్ధమైన నిర్వహణ షెడ్యూల్స్.',
     icon: <Settings className="w-5 h-5" />,
   },
   {
     id: 'installation',
     title: 'Installation & Commissioning',
+    titleTe: 'పరికరాల అమరిక & కమిషనింగ్',
     description:
       'Professional setup, alignment, testing, and handover of newly procured industrial machinery and electrical systems.',
+    descriptionTe:
+      'కొత్త యంత్రాల లేజర్ అలైన్‌మెంట్, ఎలక్ట్రికల్ ఇంటర్‌కనెక్షన్ మరియు ట్రయల్ రన్ విజయవంతమైన నిర్వహణ.',
     icon: <CalendarCheck className="w-5 h-5" />,
   },
   {
     id: 'emergency',
     title: 'Breakdown & Emergency Response',
+    titleTe: 'బ్రేక్‌డౌన్ & అత్యవసర స్పందన',
     description:
       'Rapid diagnostic support and on-site repair services when critical equipment failures threaten production continuity.',
+    descriptionTe:
+      'కీలకమైన యంత్ర వైఫల్యాల సమయంలో ప్లాంట్ ఉత్పత్తి ఆగకుండా వేగవంతమైన ఆన్-సైట్ మరమ్మతు సేవలు.',
     icon: <AlertTriangle className="w-5 h-5" />,
   },
 ];
 
-/**
- * Professional values / service approach principles.
- * Only verifiable operational standards — no invented guarantees.
- */
 interface ServiceValue {
   id: string;
   title: string;
+  titleTe: string;
   description: string;
+  descriptionTe: string;
   icon: ReactNode;
 }
 
@@ -114,57 +118,53 @@ const SERVICE_VALUES: ServiceValue[] = [
   {
     id: 'transparency',
     title: 'Transparent Service Process',
+    titleTe: 'పారదర్శక సేవా విధానం',
     description:
       'Every service engagement is documented — from initial assessment through diagnosis, repair, and testing. Clients receive clear communication at each step.',
+    descriptionTe:
+      'పరిశీలన నుండి మరమ్మతు మరియు పరీక్ష వరకు ప్రతి దశ అధికారిక ఇంజనీర్ సర్వీస్ రికార్డ్ ద్వారా డాక్యుమెంట్ చేయబడుతుంది.',
     icon: <ClipboardCheck className="w-5 h-5" />,
   },
   {
     id: 'reliability',
     title: 'Dependable Execution',
+    titleTe: 'విశ్వసనీయమైన పనితీరు',
     description:
       'We commit to completing service work as scoped. When issues arise during servicing, they are communicated promptly with recommended next steps.',
+    descriptionTe:
+      'ఖచ్చితమైన సమయపాలనతో నాణ్యమైన ఇంజనీరింగ్ సేవలను అందించడంలో మా నిబద్ధత ఎల్లప్పుడూ ఉంటుంది.',
     icon: <ShieldCheck className="w-5 h-5" />,
   },
   {
     id: 'responsiveness',
     title: 'Responsive Communication',
+    titleTe: 'త్వరిత సంప్రదింపులు',
     description:
       'Timely response to service inquiries, clear scheduling, and regular progress updates throughout the service cycle.',
+    descriptionTe:
+      'సర్వీస్ అభ్యర్థనలకు తక్షణ స్పందన మరియు స్పష్టమైన విజిట్ షెడ్యూలింగ్ అందించబడుతుంది.',
     icon: <Clock className="w-5 h-5" />,
   },
   {
     id: 'partnership',
     title: 'Client Partnership Approach',
+    titleTe: 'దీర్ఘకాలిక భాగస్వామ్యం',
     description:
       'We work alongside plant managers and maintenance teams, understanding facility-specific requirements rather than applying one-size-fits-all solutions.',
+    descriptionTe:
+      'పరిశ్రమల అవసరాలకు అనుగుణంగా శాశ్వత విశ్వసనీయతను నిర్మించే విధంగా మేము భాగస్వామ్యంతో పనిచేస్తాము.',
     icon: <Handshake className="w-5 h-5" />,
   },
 ];
 
-/* ==========================================================================
- * ABOUT PAGE COMPONENT
- * ========================================================================== */
-
-/**
- * AboutPage — Production About page for Venkata Prasanna Enterprises
- *
- * Sections:
- * 1. Page Hero — Company identity & positioning
- * 2. Company Background — Who VPE is, what they do, how they operate
- * 3. Engineer Profile — Founder introduction with photo placeholder
- * 4. Experience — Industries and equipment types serviced
- * 5. Expertise — Technical capability areas
- * 6. Professional Values / Service Approach
- * 7. CTA strip — Services, Contact, and Service Request
- *
- * Navbar & Footer are rendered by PublicLayout (shared layout component).
- */
 export const AboutPage: FC = () => {
+  const { t, language } = useLanguage();
+  const isTe = language === 'te';
+
   return (
     <>
       {/* ================================================================
           SECTION 1: PAGE HERO
-          Company identity eyebrow and page positioning.
           ================================================================ */}
       <section
         aria-labelledby="about-hero-title"
@@ -172,36 +172,40 @@ export const AboutPage: FC = () => {
       >
         <Container size="2xl">
           <div className="py-14 sm:py-18 lg:py-22">
-            {/* Breadcrumb */}
             <nav aria-label="Breadcrumb" className="mb-6">
               <ol className="flex items-center gap-2 text-xs text-slate-400">
                 <li>
                   <Link to={ROUTES.PUBLIC.HOME} className="hover:text-white transition-colors">
-                    Home
+                    {t('nav.home')}
                   </Link>
                 </li>
                 <li aria-hidden="true">/</li>
-                <li className="text-amber-400 font-semibold">About</li>
+                <li className="text-amber-400 font-semibold">{t('nav.about')}</li>
               </ol>
             </nav>
 
             <div className="max-w-3xl space-y-5">
               <Badge variant="amber" icon={<BookOpen className="w-3 h-3" />}>
-                About Our Company
+                {isTe ? 'మా సంస్థ గురించి' : 'About Our Company'}
               </Badge>
 
               <h1
                 id="about-hero-title"
                 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-[1.1]"
               >
-                About{' '}
-                <span className="text-amber-400">Venkata Prasanna Enterprises</span>
+                {isTe ? (
+                  <>
+                    <span className="text-amber-400">వెంకట ప్రసన్న ఎంటర్‌ప్రైజెస్</span> గురించి
+                  </>
+                ) : (
+                  <>
+                    About <span className="text-amber-400">Venkata Prasanna Enterprises</span>
+                  </>
+                )}
               </h1>
 
               <p className="text-base sm:text-lg text-slate-300 leading-relaxed max-w-2xl">
-                An industrial service company providing professional equipment
-                maintenance, repair, and troubleshooting for manufacturing and
-                processing plants.
+                {t('about.page_subtitle')}
               </p>
             </div>
           </div>
@@ -209,161 +213,141 @@ export const AboutPage: FC = () => {
       </section>
 
       {/* ================================================================
-          SECTION 2: COMPANY BACKGROUND
-          Who VPE is, what they do, how they operate.
+          SECTION 2: COMPANY BACKGROUND & FACTS
           ================================================================ */}
       <section aria-labelledby="company-bg-title" className="py-16 sm:py-20 lg:py-24 bg-white">
         <Container size="2xl">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
-            {/* Text Column */}
             <div className="space-y-6">
               <SectionHeading
-                badge="Company Background"
-                title="Built for Industrial Service"
+                badge={isTe ? 'కంపెనీ నేపథ్యం' : 'Company Overview'}
+                title={t('about.mission_title')}
+                subtitle={t('about.mission_desc')}
                 className="mb-0 sm:mb-0"
               />
-
               <div className="space-y-4 text-sm sm:text-base text-slate-700 leading-relaxed">
                 <p>
-                  Venkata Prasanna Enterprises (VPE) is an industrial service company
-                  founded to address the maintenance and repair needs of manufacturing
-                  and processing plants. We provide skilled engineering services
-                  directly at plant locations, working with a range of industrial
-                  equipment across multiple sectors.
+                  {isTe
+                    ? 'వెంకట ప్రసన్న ఎంటర్‌ప్రైజెస్ ఆంధ్రప్రదేశ్ మరియు సమీప పారిశ్రామిక ప్రాంతాలలో వరి మిల్లులు, టెక్స్‌టైల్స్, ఫుడ్ ప్రాసెసింగ్, ఆయిల్ & ఎనర్జీ, స్టీల్ ప్లాంట్లు మరియు పారిశ్రామిక కంప్రెసర్లకు నిపుణుల ఇంజనీరింగ్ సేవలను అందిస్తోంది.'
+                    : 'Venkata Prasanna Enterprises provides skilled engineering services directly at industrial plant locations across Andhra Pradesh and neighbouring industrial corridors — specializing in rice mills, textiles, edible oils, steel, energy facilities, and high-pressure compressor systems.'}
                 </p>
                 <p>
-                  Our services cover the full equipment lifecycle — from initial
-                  inspection and preventive maintenance to emergency troubleshooting
-                  and major repairs. We work with rice mills, textile factories,
-                  cashew processing plants, and general manufacturing facilities.
+                  {isTe
+                    ? 'ప్రతి ప్రాజెక్ట్ చట్టబద్ధమైన నిబంధనలు మరియు పారిశ్రామిక భద్రతా ప్రమాణాలకు అనుగుణంగా నిర్వహించబడుతుంది. మా సేవలు GST నమోదిత (37ADYPY2158A1Z1) పద్ధతిలో ఖచ్చితమైన విడిభాగాలు మరియు పారదర్శకతతో ఉంటాయి.'
+                    : 'Every engagement complies with statutory guidelines and industrial safety protocols. Our services operate under verified GST registration (37ADYPY2158A1Z1) ensuring full commercial transparency.'}
                 </p>
-                <p>
-                  Every service engagement follows a structured process: assessment,
-                  diagnosis, execution, testing, and documentation. This ensures
-                  transparency, accountability, and a clear record for each job
-                  completed.
-                </p>
+              </div>
+
+              <div className="pt-2 flex flex-wrap gap-3">
+                <Link to={ROUTES.PUBLIC.INDUSTRIES}>
+                  <Button variant="primary" size="md" rightIcon={<ArrowRight className="w-4 h-4" />}>
+                    {t('nav.industries')} (26)
+                  </Button>
+                </Link>
+                <Link to={ROUTES.PUBLIC.VENDOR_EXPERIENCE}>
+                  <Button variant="outline" size="md">
+                    {t('nav.vendor_experience')}
+                  </Button>
+                </Link>
               </div>
             </div>
 
-            {/* Key Information Card */}
-            <div className="space-y-6">
-              <Card variant="industrial">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Factory className="w-5 h-5 text-amber-600" aria-hidden="true" />
-                    Company Overview
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <dl className="space-y-4">
-                    <div className="flex items-start gap-3">
-                      <dt className="text-sm font-semibold text-slate-900 min-w-[120px] shrink-0">
-                        Company Name
-                      </dt>
-                      <dd className="text-sm text-slate-700">
-                        Venkata Prasanna Enterprises
-                      </dd>
-                    </div>
-                    <div className="flex items-start gap-3 pt-3 border-t border-slate-100">
-                      <dt className="text-sm font-semibold text-slate-900 min-w-[120px] shrink-0">
-                        Business Type
-                      </dt>
-                      <dd className="text-sm text-slate-700">
-                        Industrial Equipment Service Provider
-                      </dd>
-                    </div>
-                    <div className="flex items-start gap-3 pt-3 border-t border-slate-100">
-                      <dt className="text-sm font-semibold text-slate-900 min-w-[120px] shrink-0">
-                        Core Services
-                      </dt>
-                      <dd className="text-sm text-slate-700">
-                        Inspection, Troubleshooting, Repair, Maintenance, Installation
-                      </dd>
-                    </div>
-                    <div className="flex items-start gap-3 pt-3 border-t border-slate-100">
-                      <dt className="text-sm font-semibold text-slate-900 min-w-[120px] shrink-0">
-                        Industries
-                      </dt>
-                      <dd className="text-sm text-slate-700">
-                        Rice Mills, Textile, Cashew Processing, General Manufacturing
-                      </dd>
-                    </div>
-                    <div className="flex items-start gap-3 pt-3 border-t border-slate-100">
-                      <dt className="text-sm font-semibold text-slate-900 min-w-[120px] shrink-0">
-                        Service Model
-                      </dt>
-                      <dd className="text-sm text-slate-700">
-                        On-site field service, workshop repair, annual maintenance contracts
-                      </dd>
-                    </div>
-                    <div className="flex items-start gap-3 pt-3 border-t border-slate-100">
-                      <dt className="text-sm font-semibold text-slate-900 min-w-[120px] shrink-0">
-                        Location
-                      </dt>
-                      <dd className="text-sm text-slate-700">
-                        {/*
-                          CONTENT PLACEHOLDER:
-                          Replace with actual company location when available.
-                        */}
-                        Industrial Area — Location to be updated
-                      </dd>
-                    </div>
-                  </dl>
-                </CardContent>
-              </Card>
+            {/* Quick Facts Card with Verified Company Information */}
+            <div className="bg-slate-50 rounded-2xl border border-slate-200 p-6 sm:p-8 space-y-6">
+              <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <Building2 className="w-5 h-5 text-amber-600" aria-hidden="true" />
+                {isTe ? 'అధికారిక సంస్థ వివరాలు' : 'Verified Enterprise Facts'}
+              </h3>
+
+              <dl className="space-y-3.5 text-xs sm:text-sm">
+                <div className="flex items-start justify-between py-2 border-b border-slate-200">
+                  <dt className="text-slate-500 font-medium">{isTe ? 'సంస్థ పేరు' : 'Company Name'}</dt>
+                  <dd className="font-bold text-slate-900 text-right">Venkata Prasanna Enterprises</dd>
+                </div>
+
+                <div className="flex items-start justify-between py-2 border-b border-slate-200">
+                  <dt className="text-slate-500 font-medium">{isTe ? 'వ్యవస్థాపకుడు' : 'Founder'}</dt>
+                  <dd className="font-bold text-amber-700 text-right">Y Srinivas</dd>
+                </div>
+
+                <div className="flex items-start justify-between py-2 border-b border-slate-200">
+                  <dt className="text-slate-500 font-medium">{isTe ? 'హోదా' : 'Designation'}</dt>
+                  <dd className="font-semibold text-slate-800 text-right">Founder & Lead Service Engineer</dd>
+                </div>
+
+                <div className="flex items-start justify-between py-2 border-b border-slate-200">
+                  <dt className="text-slate-500 font-medium">GSTIN</dt>
+                  <dd className="font-mono font-bold text-slate-900 text-right">37ADYPY2158A1Z1</dd>
+                </div>
+
+                <div className="flex items-start justify-between py-2 border-b border-slate-200">
+                  <dt className="text-slate-500 font-medium">{isTe ? 'ఫోన్ నంబర్' : 'Phone'}</dt>
+                  <dd className="font-mono font-bold text-slate-900 text-right">+91 9866227780</dd>
+                </div>
+
+                <div className="flex items-start justify-between py-2 border-b border-slate-200">
+                  <dt className="text-slate-500 font-medium">{isTe ? 'ఈమెయిల్' : 'Email'}</dt>
+                  <dd className="font-mono text-slate-800 text-right break-all">venkataprasannaenterprises@gmail.com</dd>
+                </div>
+
+                <div className="flex items-start justify-between py-2 border-b border-slate-200">
+                  <dt className="text-slate-500 font-medium">{isTe ? 'స్థావరం' : 'Location'}</dt>
+                  <dd className="font-medium text-slate-800 text-right">Andhra Pradesh, India</dd>
+                </div>
+
+                <div className="flex items-start justify-between py-2">
+                  <dt className="text-slate-500 font-medium">{isTe ? 'నిర్వహణ సమయం' : 'Availability'}</dt>
+                  <dd className="font-bold text-emerald-700 text-right">{t('company.support_availability')}</dd>
+                </div>
+              </dl>
             </div>
           </div>
         </Container>
       </section>
 
       {/* ================================================================
-          SECTION 3: ENGINEER PROFILE
-          Founder / lead engineer introduction.
+          SECTION 3: ENGINEER PROFILE — FOUNDER: Y SRINIVAS
           ================================================================ */}
       <section aria-labelledby="engineer-profile-title" className="py-16 sm:py-20 lg:py-24 bg-slate-50 border-y border-slate-200">
         <Container size="2xl">
           <SectionHeading
-            badge="Our Engineer"
-            title="Meet the Founder & Lead Engineer"
-            subtitle="The hands-on expertise driving every service engagement at Venkata Prasanna Enterprises."
+            badge={t('home.founder_badge')}
+            title={isTe ? 'వ్యవస్థాపకుడు & లీడ్ ఇంజనీర్' : 'Meet the Founder & Lead Engineer'}
+            subtitle={t('home.founder_subtitle')}
             align="center"
           />
 
           <div className="max-w-5xl mx-auto">
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
               <div className="grid grid-cols-1 md:grid-cols-5">
-                {/* Profile Visual */}
                 <div className="md:col-span-2 bg-slate-900 p-8 sm:p-10 flex flex-col items-center justify-center text-center text-white">
-                  {/* Engineer Reference Photo */}
                   <div className="w-28 h-28 sm:w-36 sm:h-36 rounded-full overflow-hidden border-4 border-amber-500/70 shadow-xl mb-3 bg-slate-800">
                     <IndustrialImage
                       src={INDUSTRIAL_IMAGES.about.leadEngineer.url}
-                      alt={INDUSTRIAL_IMAGES.about.leadEngineer.alt}
+                      alt="Y Srinivas — Founder & Lead Engineer"
                       aspectRatio="square"
                       objectFit="cover"
                       className="w-full h-full object-cover"
                     />
                   </div>
                   <span className="text-[10px] text-amber-400 font-mono mb-2 block">
-                    (VPE Certified Field Specialist Reference)
+                    (VPE Certified Technical Lead)
                   </span>
 
                   <h3
                     id="engineer-profile-title"
                     className="text-xl sm:text-2xl font-bold tracking-tight"
                   >
-                    {/* CONTENT PLACEHOLDER: Replace with verified full name */}
-                    Venkata Prasanna
+                    {t('company.founder')}
                   </h3>
                   <p className="text-amber-400 text-sm font-semibold mt-1">
-                    Founder & Lead Service Engineer
+                    {t('company.founder_title')}
                   </p>
 
                   <div className="mt-5 flex flex-wrap justify-center gap-2">
-                    <Badge variant="amber" className="text-[11px]">Mechanical</Badge>
-                    <Badge variant="amber" className="text-[11px]">Electrical</Badge>
-                    <Badge variant="amber" className="text-[11px]">Industrial Equipment</Badge>
+                    <Badge variant="amber" className="text-[11px]">{isTe ? 'మెకానికల్' : 'Mechanical'}</Badge>
+                    <Badge variant="amber" className="text-[11px]">{isTe ? 'ఎలక్ట్రికల్' : 'Electrical'}</Badge>
+                    <Badge variant="amber" className="text-[11px]">{isTe ? 'పరికరాలు' : 'Industrial Equipment'}</Badge>
                   </div>
 
                   <div className="mt-6 pt-5 border-t border-white/10 w-full">
@@ -374,62 +358,45 @@ export const AboutPage: FC = () => {
                         fullWidth
                         rightIcon={<ArrowRight className="w-4 h-4" />}
                       >
-                        Contact Directly
+                        {isTe ? 'నేరుగా సంప్రదించండి' : 'Contact Directly'}
                       </Button>
                     </Link>
                   </div>
                 </div>
 
-                {/* Profile Content */}
                 <div className="md:col-span-3 p-6 sm:p-8 lg:p-10 space-y-6">
-                  {/* Background */}
                   <div>
                     <h4 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-3 flex items-center gap-2">
                       <BookOpen className="w-4 h-4 text-amber-600" aria-hidden="true" />
-                      Professional Background
+                      {t('home.founder_pro_bg')}
                     </h4>
                     <div className="text-sm text-slate-700 leading-relaxed space-y-3">
+                      <p>{t('home.founder_bg_text')}</p>
                       <p>
-                        {/*
-                          CONTENT PLACEHOLDER:
-                          Replace with verified professional background when available.
-                          The text below is a structural placeholder describing the role accurately.
-                        */}
-                        Venkata Prasanna is the founder of Venkata Prasanna Enterprises,
-                        bringing practical, hands-on expertise in servicing industrial
-                        equipment across manufacturing and processing plants. His work
-                        spans mechanical repairs, electrical troubleshooting, equipment
-                        installation, and preventive maintenance programs.
-                      </p>
-                      <p>
-                        Having worked directly with plant equipment in rice mills, textile
-                        factories, and cashew processing units, he understands the
-                        operational demands and time-sensitivity of industrial maintenance.
-                        This field experience shapes the company&apos;s service-first approach.
+                        {isTe
+                          ? 'శ్రీ లలిత రైస్ ఇండస్ట్రీ, శ్రీ మురళీ మోహన రైస్ మిల్, అదానీ విల్మర్, IOCL, HPCL, విశాఖ డెయిరీ, అట్లాస్ కాప్కో తదితర 26 ప్రముఖ పరిశ్రమలకు సేవలందించిన ప్రత్యక్ష అనుభవం సంస్థకు ప్రధాన బలం.'
+                          : 'With confirmed vendor registration records and multi-year service relationships across 26 major industrial establishments including Sri Lalitha Rice Industry, Adani Wilmar, IOCL, HPCL, Visakha Dairy, and Atlas Copco, Y Srinivas brings proven on-site leadership.'}
                       </p>
                     </div>
                   </div>
 
-                  {/* Equipment & Industry Experience */}
                   <div>
                     <h4 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-3 flex items-center gap-2">
                       <Wrench className="w-4 h-4 text-amber-600" aria-hidden="true" />
-                      Equipment & Industry Experience
+                      {t('home.founder_expertise')}
                     </h4>
                     <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2.5" role="list">
                       {[
-                        'Rice mill processing equipment',
-                        'Textile looms & spinning machinery',
-                        'Cashew cutting & drying units',
-                        'Motors, pumps & gearboxes',
-                        'Conveyor & material handling systems',
-                        'Electrical panels & control circuits',
-                        'Production line automation components',
-                        'Utility & support systems',
-                      ].map((item) => (
-                        <li key={item} className="flex items-center gap-2 text-sm text-slate-700">
+                        isTe ? 'వరి మిల్లుల యంత్రాల సర్వీసింగ్' : 'Rice mill equipment servicing',
+                        isTe ? 'టెక్స్‌టైల్ యంత్రాల నిర్వహణ' : 'Textile machinery maintenance',
+                        isTe ? 'జీడిపప్పు ప్లాంట్ మరమ్మతులు' : 'Cashew plant equipment repair',
+                        isTe ? 'ఎలక్ట్రికల్ సిస్టమ్ ట్రబుల్షూటింగ్' : 'Electrical system troubleshooting',
+                        isTe ? 'మోటార్లు & కంప్రెసర్ల ఓవర్‌హాల్' : 'Motor and pump overhauling',
+                        isTe ? 'నివారణ నిర్వహణ ప్రణాళిక' : 'Preventive maintenance planning',
+                      ].map((skill) => (
+                        <li key={skill} className="flex items-center gap-2 text-sm text-slate-700">
                           <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" aria-hidden="true" />
-                          <span>{item}</span>
+                          <span>{skill}</span>
                         </li>
                       ))}
                     </ul>
@@ -442,44 +409,32 @@ export const AboutPage: FC = () => {
       </section>
 
       {/* ================================================================
-          SECTION 4: EXPERTISE AREAS
-          Technical capability breakdown.
+          SECTION 4: TECHNICAL EXPERTISE AREAS
           ================================================================ */}
       <section aria-labelledby="expertise-title" className="py-16 sm:py-20 lg:py-24 bg-white">
         <Container size="2xl">
           <SectionHeading
-            badge="Our Expertise"
-            title="Technical Service Capabilities"
-            subtitle="The core engineering competencies we bring to every service engagement."
+            badge={isTe ? 'సాంకేతిక నైపుణ్యం' : 'Technical Capability'}
+            title={isTe ? 'మా ఇంజనీరింగ్ సేవా విభాగాలు' : 'Areas of Technical Expertise'}
+            subtitle={isTe ? 'వివిధ రంగాల పరిశ్రమలకు మేము అందించే ప్రధాన నిర్వహణ విభాగాలు.' : 'Core engineering domains covered during plant maintenance and breakdown triage.'}
             align="center"
-            action={
-              <Link to={ROUTES.PUBLIC.SERVICES}>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  rightIcon={<ArrowRight className="w-4 h-4" />}
-                >
-                  View All Services
-                </Button>
-              </Link>
-            }
           />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {EXPERTISE_AREAS.map((area) => (
-              <Card key={area.id} variant="interactive" className="group">
-                <CardContent className="p-6 sm:p-7 space-y-4">
-                  <div className="w-11 h-11 rounded-lg bg-amber-50 border border-amber-200 text-amber-700 flex items-center justify-center group-hover:bg-amber-100 group-hover:border-amber-300 transition-colors duration-200">
+              <Card key={area.id} variant="default" className="hover:border-amber-300 transition-colors">
+                <CardHeader>
+                  <div className="w-10 h-10 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center mb-3">
                     {area.icon}
                   </div>
-                  <div>
-                    <h3 className="text-base font-bold text-slate-900 mb-2">
-                      {area.title}
-                    </h3>
-                    <p className="text-sm text-slate-600 leading-relaxed">
-                      {area.description}
-                    </p>
-                  </div>
+                  <CardTitle className="text-lg">
+                    {isTe ? area.titleTe : area.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-slate-600 leading-relaxed">
+                    {isTe ? area.descriptionTe : area.description}
+                  </p>
                 </CardContent>
               </Card>
             ))}
@@ -489,146 +444,53 @@ export const AboutPage: FC = () => {
 
       {/* ================================================================
           SECTION 5: PROFESSIONAL VALUES / SERVICE APPROACH
-          How VPE operates — verified operational principles only.
           ================================================================ */}
-      <section aria-labelledby="values-title" className="py-16 sm:py-20 lg:py-24 bg-slate-50 border-y border-slate-200">
+      <section aria-labelledby="values-title" className="py-16 sm:py-20 bg-slate-50 border-t border-slate-200">
         <Container size="2xl">
           <SectionHeading
-            badge="Service Approach"
-            title="How We Work"
-            subtitle="The operational standards that guide how we deliver industrial services to our clients."
+            badge={isTe ? 'సేవా ప్రమాణాలు' : 'Service Principles'}
+            title={isTe ? 'మా వృత్తిపరమైన విలువలు' : 'Our Professional Service Values'}
+            subtitle={isTe ? 'మా ప్రతి సర్వీస్ పనితీరులో పాటించే ఉన్నత ప్రమాణాలు.' : 'Operating standards that ensure reliability and transparency for industrial clients.'}
             align="center"
           />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6 max-w-4xl mx-auto">
-            {SERVICE_VALUES.map((value) => (
-              <div
-                key={value.id}
-                className="flex items-start gap-4 bg-white border border-slate-200 rounded-xl p-5 sm:p-6"
-              >
-                <div className="w-11 h-11 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center shrink-0">
-                  {value.icon}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {SERVICE_VALUES.map((val) => (
+              <Card key={val.id} variant="flat" className="bg-white border border-slate-200 p-6 space-y-3">
+                <div className="w-10 h-10 rounded-lg bg-slate-100 text-slate-800 flex items-center justify-center">
+                  {val.icon}
                 </div>
-                <div className="min-w-0">
-                  <h3 className="text-base font-bold text-slate-900 mb-1">
-                    {value.title}
-                  </h3>
-                  <p className="text-sm text-slate-600 leading-relaxed">
-                    {value.description}
-                  </p>
-                </div>
-              </div>
+                <h4 className="text-base font-bold text-slate-900">
+                  {isTe ? val.titleTe : val.title}
+                </h4>
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                  {isTe ? val.descriptionTe : val.description}
+                </p>
+              </Card>
             ))}
-          </div>
-
-          {/* Service Workflow Summary */}
-          <div className="mt-12 sm:mt-16 max-w-4xl mx-auto">
-            <Card variant="default">
-              <CardContent className="p-6 sm:p-8">
-                <h3 className="text-lg font-bold text-slate-900 mb-5 flex items-center gap-2">
-                  <Target className="w-5 h-5 text-amber-600" aria-hidden="true" />
-                  Our Service Workflow
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-5 gap-4 sm:gap-0">
-                  {[
-                    { step: '01', label: 'Service Request', desc: 'Client submits request' },
-                    { step: '02', label: 'Assessment', desc: 'On-site equipment review' },
-                    { step: '03', label: 'Diagnosis', desc: 'Root cause identification' },
-                    { step: '04', label: 'Service Execution', desc: 'Repair / maintenance work' },
-                    { step: '05', label: 'Testing & Handover', desc: 'Verification & documentation' },
-                  ].map((item, index) => (
-                    <div key={item.step} className="relative text-center sm:text-left">
-                      {/* Connector line (desktop only, not on last item) */}
-                      {index < 4 && (
-                        <div className="hidden sm:block absolute top-5 left-1/2 w-full h-px bg-slate-200" aria-hidden="true" />
-                      )}
-                      <div className="relative z-10 flex flex-col items-center sm:items-center">
-                        <span className="w-10 h-10 rounded-full bg-amber-50 border-2 border-amber-300 text-amber-800 text-xs font-bold flex items-center justify-center mb-2">
-                          {item.step}
-                        </span>
-                        <p className="text-sm font-bold text-slate-900">{item.label}</p>
-                        <p className="text-xs text-slate-500 mt-0.5">{item.desc}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
           </div>
         </Container>
       </section>
 
       {/* ================================================================
-          SECTION 6: INDUSTRIAL PREVIOUS WORK REFERENCE GALLERY
-          Genuine & authorized reference photographs of previous engineering works
-          ================================================================ */}
-      <section aria-labelledby="gallery-title" className="py-16 sm:py-20 lg:py-24 bg-white">
-        <Container size="2xl">
-          <SectionHeading
-            badge="Previous Work Gallery"
-            title="Industrial Maintenance & Servicing Portfolio"
-            subtitle="Representative reference gallery of precision overhauls, sensor calibrations, and plant maintenance executions."
-            align="center"
-          />
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {INDUSTRIAL_IMAGES.about.gallery.map((item) => (
-              <div
-                key={item.id}
-                className="group bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs hover:shadow-lg transition-all"
-              >
-                <div className="relative overflow-hidden aspect-[4/3] bg-slate-100">
-                  <IndustrialImage
-                    src={item.url}
-                    alt={item.alt}
-                    aspectRatio="4/3"
-                    objectFit="cover"
-                  />
-                  <div className="absolute top-2.5 right-2.5 bg-slate-900/80 text-amber-400 font-mono text-[10px] font-bold px-2 py-0.5 rounded">
-                    {item.sector}
-                  </div>
-                </div>
-                <div className="p-4 space-y-1">
-                  <h4 className="text-sm font-bold text-slate-900 group-hover:text-amber-800 transition-colors">
-                    {item.title}
-                  </h4>
-                  <p className="text-xs text-slate-500">
-                    Industrial Field Service Reference Execution
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-8 p-4 bg-slate-50 border border-slate-200 rounded-xl text-center text-xs text-slate-500 max-w-2xl mx-auto">
-            <span className="font-bold text-slate-700 block mb-0.5">Note on Photographic Transparency:</span>
-            Photographs shown above represent actual industrial service methodologies and machinery handled. Company-specific on-site authorization is observed for customer intellectual property.
-          </div>
-        </Container>
-      </section>
-
-      {/* ================================================================
-          SECTION 7: CTA STRIP
-          Services, Contact, and Service Request.
+          SECTION 6: CTA STRIP
           ================================================================ */}
       <section aria-labelledby="about-cta-title" className="py-16 sm:py-20 lg:py-24 bg-slate-900 text-white">
         <Container size="2xl">
           <div className="text-center max-w-3xl mx-auto space-y-6">
             <Badge variant="amber" icon={<Wrench className="w-3 h-3" />}>
-              Work With Us
+              {t('home.cta_badge')}
             </Badge>
 
             <h2
               id="about-cta-title"
               className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight"
             >
-              Ready to Discuss Your Maintenance Needs?
+              {t('home.cta_box_title')}
             </h2>
 
             <p className="text-base sm:text-lg text-slate-300 leading-relaxed max-w-2xl mx-auto">
-              Whether you need a one-time equipment repair, ongoing preventive
-              maintenance, or want to explore an annual service contract — get in
-              touch with our team.
+              {t('home.cta_box_desc')}
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
@@ -638,7 +500,7 @@ export const AboutPage: FC = () => {
                   size="lg"
                   rightIcon={<ArrowRight className="w-5 h-5" />}
                 >
-                  Request Service
+                  {t('request.submit_btn')}
                 </Button>
               </Link>
               <Link to={ROUTES.PUBLIC.SERVICES}>
@@ -647,7 +509,7 @@ export const AboutPage: FC = () => {
                   size="lg"
                   className="bg-white/10 text-white border-white/20 hover:bg-white/20 active:bg-white/25"
                 >
-                  Explore Services
+                  {t('home.cta_explore')}
                 </Button>
               </Link>
               <Link to={ROUTES.PUBLIC.CONTACT}>
@@ -657,7 +519,7 @@ export const AboutPage: FC = () => {
                   leftIcon={<Phone className="w-4 h-4" />}
                   className="bg-white/10 text-white border-white/20 hover:bg-white/20 active:bg-white/25"
                 >
-                  Contact Us
+                  {t('home.get_in_touch')}
                 </Button>
               </Link>
             </div>

@@ -79,11 +79,11 @@ export const Navbar: FC = () => {
             <div className="flex items-center gap-6">
               <span className="flex items-center gap-1.5 font-medium text-amber-400">
                 <ShieldCheck className="w-3.5 h-3.5" aria-hidden="true" />
-                VPE Industrial Service Management
+                {t('nav.portal_title')}
               </span>
               <span className="hidden md:flex items-center gap-1.5 text-slate-400">
                 <Clock className="w-3.5 h-3.5" aria-hidden="true" />
-                24/7 Breakdown Support & Maintenance
+                {t('company.support_availability')}
               </span>
             </div>
 
@@ -91,11 +91,11 @@ export const Navbar: FC = () => {
               <LanguageSelector variant="dark" />
               <span className="text-slate-700 hidden sm:inline">|</span>
               <a
-                href="tel:+918000000000"
+                href="tel:+919866227780"
                 className="hidden lg:flex items-center gap-1 text-slate-200 hover:text-amber-400 transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-amber-400 rounded"
               >
                 <Phone className="w-3 h-3 text-amber-500" aria-hidden="true" />
-                <span className="font-semibold tracking-wide">Emergency: +91 800-000-0000</span>
+                <span className="font-semibold tracking-wide">{t('nav.emergency_phone')}</span>
               </a>
               <span className="text-slate-700 hidden sm:inline">|</span>
               <Link

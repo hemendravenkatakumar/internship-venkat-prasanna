@@ -5,6 +5,7 @@ import { FormField } from '@/components/common/Form/FormField';
 import { Input } from '@/components/common/Form/Input';
 import { Textarea } from '@/components/common/Form/Textarea';
 import { Select } from '@/components/common/Form/Select';
+import { useLanguage } from '@/context/LanguageContext';
 import {
   Send,
   CheckCircle2,
@@ -34,17 +35,14 @@ export interface ContactFormProps {
   externalError?: string | null;
 }
 
-/**
- * ContactForm — Production industrial enquiry form.
- * Features thorough field validation, connected ARIA error states,
- * and handles Loading, Success, Validation, and Error states cleanly.
- * Ready to connect directly to backend REST endpoints.
- */
 export const ContactForm: FC<ContactFormProps> = ({
   onSubmitEnquiry,
   externalLoading = false,
   externalError = null,
 }) => {
+  const { t, language } = useLanguage();
+  const isTe = language === 'te';
+
   const [formData, setFormData] = useState<ContactEnquiryPayload>({
     name: '',
     company: '',
@@ -70,7 +68,6 @@ export const ContactForm: FC<ContactFormProps> = ({
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
-    // Clear error on change
     if (errors[name]) {
       setErrors((prev) => {
         const next = { ...prev };
@@ -88,42 +85,40 @@ export const ContactForm: FC<ContactFormProps> = ({
     const newErrors: Record<string, string> = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = 'Full name and designation are required.';
+      newErrors.name = isTe ? 'పూర్తి పేరు నమోదు చేయాలి.' : 'Full name and designation are required.';
     }
 
     if (!formData.company.trim()) {
-      newErrors.company = 'Company, mill, or facility name is required.';
+      newErrors.company = isTe ? 'కంపెనీ లేదా పరిశ్రమ పేరు అవసరం.' : 'Company, mill, or facility name is required.';
     }
 
     if (!formData.industry) {
-      newErrors.industry = 'Please select your industrial sector.';
+      newErrors.industry = isTe ? 'పరిశ్రమ విభాగాన్ని ఎంచుకోండి.' : 'Please select your industrial sector.';
     }
 
-    // Mobile validation: digits only, at least 10 digits
     const cleanedMobile = formData.mobile.replace(/[\s-]/g, '');
     if (!cleanedMobile) {
-      newErrors.mobile = 'Mobile contact number is required.';
+      newErrors.mobile = isTe ? 'మొబైల్ నంబర్ అవసరం.' : 'Mobile contact number is required.';
     } else if (!/^\+?[0-9]{10,14}$/.test(cleanedMobile)) {
-      newErrors.mobile = 'Please enter a valid 10-digit mobile number.';
+      newErrors.mobile = isTe ? 'దయచేసి సరైన 10 అంకెల మొబైల్ నంబర్‌ను నమోదు చేయండి.' : 'Please enter a valid 10-digit mobile number.';
     }
 
-    // Email validation if entered or required for formal quotes
     if (!formData.email.trim()) {
-      newErrors.email = 'Official email address is required for enquiry confirmation.';
+      newErrors.email = isTe ? 'అధికారిక ఈమెయిల్ అవసరం.' : 'Official email address is required for enquiry confirmation.';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
-      newErrors.email = 'Please enter a valid work email address.';
+      newErrors.email = isTe ? 'దయచేసి సరైన ఈమెయిల్ చిరునామా నమోదు చేయండి.' : 'Please enter a valid work email address.';
     }
 
     if (!formData.location.trim()) {
-      newErrors.location = 'Plant location (City, District, State) is required.';
+      newErrors.location = isTe ? 'ప్లాంట్ లొకేషన్ వివరాలు నమోదు చేయండి.' : 'Plant location (City, District, State) is required.';
     }
 
     if (!formData.enquiryType) {
-      newErrors.enquiryType = 'Please select the purpose of your enquiry.';
+      newErrors.enquiryType = isTe ? 'విచారణ ఉద్దేశాన్ని ఎంచుకోండి.' : 'Please select the purpose of your enquiry.';
     }
 
     if (!formData.message.trim() || formData.message.trim().length < 10) {
-      newErrors.message = 'Please provide details of your enquiry (at least 10 characters).';
+      newErrors.message = isTe ? 'దయచేసి కనీసం 10 అక్షరాలలో సమస్యను వివరించండి.' : 'Please provide details of your enquiry (at least 10 characters).';
     }
 
     setErrors(newErrors);
@@ -147,7 +142,7 @@ export const ContactForm: FC<ContactFormProps> = ({
 
       setIsSuccess(true);
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Unable to transmit enquiry. Please try again.';
+      const message = err instanceof Error ? err.message : (isTe ? 'సమర్పణలో లోపం ఏర్పడింది. మళ్లీ ప్రయత్నించండి.' : 'Unable to transmit enquiry. Please try again.');
       setInternalError(message);
     } finally {
       setInternalLoading(false);
@@ -179,19 +174,31 @@ export const ContactForm: FC<ContactFormProps> = ({
         </div>
 
         <div className="space-y-2 max-w-lg mx-auto">
-          <h3 className="text-xl font-bold text-slate-900">Enquiry Transmitted Successfully</h3>
+          <h3 className="text-xl font-bold text-slate-900">
+            {isTe ? 'విచారణ విజయవంతంగా సమర్పించబడింది' : 'Enquiry Transmitted Successfully'}
+          </h3>
           <p className="text-sm text-slate-600 leading-relaxed">
-            Thank you, <span className="font-semibold text-slate-900">{formData.name}</span>.
-            Your industrial service enquiry for <span className="font-semibold text-slate-900">{formData.company}</span> has
-            been recorded. Our engineering dispatch desk will review your facility requirements and contact you via{' '}
-            <span className="font-mono font-medium text-slate-800">{formData.mobile}</span> or{' '}
-            <span className="font-mono font-medium text-slate-800">{formData.email}</span>.
+            {isTe ? (
+              <>
+                ధన్యవాదాలు, <span className="font-semibold text-slate-900">{formData.name}</span> గారు.
+                మీ పరిశ్రమ <span className="font-semibold text-slate-900">{formData.company}</span> కొరకు సర్వీస్ విచారణ నమోదైంది.
+                మా ఇంజనీరింగ్ బృందం <span className="font-mono font-medium text-slate-800">{formData.mobile}</span> ద్వారా మిమ్మల్ని సంప్రదిస్తుంది.
+              </>
+            ) : (
+              <>
+                Thank you, <span className="font-semibold text-slate-900">{formData.name}</span>.
+                Your industrial service enquiry for <span className="font-semibold text-slate-900">{formData.company}</span> has
+                been recorded. Our engineering dispatch desk will review your facility requirements and contact you via{' '}
+                <span className="font-mono font-medium text-slate-800">{formData.mobile}</span> or{' '}
+                <span className="font-mono font-medium text-slate-800">{formData.email}</span>.
+              </>
+            )}
           </p>
         </div>
 
         <div className="pt-2 flex justify-center gap-3">
           <Button variant="secondary" size="sm" onClick={handleReset}>
-            Submit Another Enquiry
+            {isTe ? 'మరొక విచారణ పంపండి' : 'Submit Another Enquiry'}
           </Button>
         </div>
       </Card>
@@ -201,22 +208,22 @@ export const ContactForm: FC<ContactFormProps> = ({
   return (
     <Card variant="industrial" className="p-6 sm:p-8">
       <CardContent className="p-0 space-y-6">
-        {/* Header Title */}
         <div className="border-b border-slate-100 pb-4 space-y-1">
           <h3 className="text-lg sm:text-xl font-bold text-slate-900">
-            Submit a Service Enquiry
+            {t('contact.form_title')}
           </h3>
           <p className="text-xs sm:text-sm text-slate-500">
-            Fill in your plant details below. Our technical dispatch desk reviews all submissions.
+            {isTe
+              ? 'మీ ప్లాంట్ మరియు యంత్ర వివరాలను పూరించండి. మా సాంకేతిక బృందం సమీక్షిస్తుంది.'
+              : 'Fill in your plant details below. Our technical dispatch desk reviews all submissions.'}
           </p>
         </div>
 
-        {/* ERROR STATE BANNER */}
         {currentError && (
           <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3 text-xs sm:text-sm text-red-900" role="alert">
             <AlertTriangle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" aria-hidden="true" />
             <div className="space-y-1">
-              <strong className="block font-bold">Transmission Error</strong>
+              <strong className="block font-bold">{isTe ? 'లోపం సంభవించింది' : 'Transmission Error'}</strong>
               <span>{currentError}</span>
             </div>
           </div>
@@ -227,14 +234,14 @@ export const ContactForm: FC<ContactFormProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormField
               id="contact-name"
-              label="Full Name & Designation"
+              label={isTe ? 'పూర్తి పేరు & హోదా' : 'Full Name & Designation'}
               required
               error={errors.name}
             >
               <Input
                 id="contact-name"
                 name="name"
-                placeholder="e.g. Plant Manager / Chief Engineer"
+                placeholder={isTe ? 'ఉదా. ప్లాంట్ మేనేజర్ / ఇంజనీర్' : 'e.g. Plant Manager / Chief Engineer'}
                 value={formData.name}
                 onChange={handleChange}
                 error={Boolean(errors.name)}
@@ -245,14 +252,14 @@ export const ContactForm: FC<ContactFormProps> = ({
 
             <FormField
               id="contact-company"
-              label="Company / Mill / Plant Name"
+              label={isTe ? 'కంపెనీ / మిల్లు పేరు' : 'Company / Mill / Plant Name'}
               required
               error={errors.company}
             >
               <Input
                 id="contact-company"
                 name="company"
-                placeholder="e.g. Sree Venkata Agro Industries"
+                placeholder={isTe ? 'ఉదా. శ్రీ లలిత రైస్ ఇండస్ట్రీ' : 'e.g. Sri Lalitha Rice Industry'}
                 value={formData.company}
                 onChange={handleChange}
                 error={Boolean(errors.company)}
@@ -266,7 +273,7 @@ export const ContactForm: FC<ContactFormProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormField
               id="contact-industry"
-              label="Industry Sector"
+              label={isTe ? 'పరిశ్రమ విభాగం' : 'Industry Sector'}
               required
               error={errors.industry}
             >
@@ -276,21 +283,25 @@ export const ContactForm: FC<ContactFormProps> = ({
                 value={formData.industry}
                 onChange={handleChange}
                 error={Boolean(errors.industry)}
-                placeholder="Select plant industry..."
+                placeholder={isTe ? 'పరిశ్రమను ఎంచుకోండి...' : 'Select plant industry...'}
                 disabled={isLoading}
                 options={[
-                  { value: 'Rice Mills', label: 'Rice Mills & Grain Processing' },
-                  { value: 'Textile & Cloth', label: 'Textile & Spinning Industries' },
-                  { value: 'Cashew Processing', label: 'Cashew Processing Plants' },
-                  { value: 'General Manufacturing', label: 'General Manufacturing & Agro-Plants' },
-                  { value: 'Other Industrial Facility', label: 'Other Industrial Facility' },
+                  { value: 'Rice Mills', label: isTe ? 'వరి మిల్లులు & ధాన్యపు ప్రాసెసింగ్' : 'Rice Mills & Grain Processing' },
+                  { value: 'Textile & Cloth', label: isTe ? 'టెక్స్‌టైల్స్ & స్పిన్నింగ్ మిల్లులు' : 'Textile & Spinning Industries' },
+                  { value: 'Cashew Processing', label: isTe ? 'జీడిపప్పు ప్రాసెసింగ్ ప్లాంట్లు' : 'Cashew Processing Plants' },
+                  { value: 'Food & Edible Oils', label: isTe ? 'ఫుడ్ ప్రాసెసింగ్ & తినదగిన నూనెలు' : 'Food & Edible Oils' },
+                  { value: 'Paper Mills', label: isTe ? 'పేపర్ మిల్లు పరిశ్రమ' : 'Paper Mills & Pulp Plants' },
+                  { value: 'Steel & Metallurgy', label: isTe ? 'స్టీల్ & మెటలర్జీ ప్లాంట్లు' : 'Steel & Heavy Metallurgy' },
+                  { value: 'Dairy & Cold Chain', label: isTe ? 'డెయిరీ & కోల్డ్ స్టోరేజ్' : 'Dairy & Ammonia Cold Storage' },
+                  { value: 'Industrial Equipment', label: isTe ? 'ఎయిర్ కంప్రెసర్లు & పరికరాలు' : 'Air Compressors & Heavy Equipment' },
+                  { value: 'Other Industrial Facility', label: isTe ? 'ఇతర పారిశ్రామిక ప్లాంట్' : 'Other Industrial Facility' },
                 ]}
               />
             </FormField>
 
             <FormField
               id="contact-enquiry-type"
-              label="Enquiry Purpose"
+              label={isTe ? 'విచారణ ఉద్దేశం' : 'Enquiry Purpose'}
               required
               error={errors.enquiryType}
             >
@@ -300,14 +311,14 @@ export const ContactForm: FC<ContactFormProps> = ({
                 value={formData.enquiryType}
                 onChange={handleChange}
                 error={Boolean(errors.enquiryType)}
-                placeholder="Select purpose..."
+                placeholder={isTe ? 'ఉద్దేశాన్ని ఎంచుకోండి...' : 'Select purpose...'}
                 disabled={isLoading}
                 options={[
-                  { value: 'General Service Consultation', label: 'General Service Consultation' },
-                  { value: 'Emergency Breakdown Assistance', label: 'Emergency Breakdown Assistance' },
-                  { value: 'Scheduled Preventive Maintenance', label: 'Scheduled Preventive Maintenance' },
-                  { value: 'Annual Maintenance Contract (AMC)', label: 'Annual Maintenance Contract (AMC)' },
-                  { value: 'Vendor Empanelment / Registration', label: 'Vendor Empanelment / Supplier Onboarding' },
+                  { value: 'General Service Consultation', label: isTe ? 'సాధారణ సర్వీస్ సంప్రదింపు' : 'General Service Consultation' },
+                  { value: 'Emergency Breakdown Assistance', label: isTe ? 'అత్యవసర బ్రేక్‌డౌన్ సహాయం' : 'Emergency Breakdown Assistance' },
+                  { value: 'Scheduled Preventive Maintenance', label: isTe ? 'షెడ్యూల్ చేసిన నివారణ నిర్వహణ' : 'Scheduled Preventive Maintenance' },
+                  { value: 'Annual Maintenance Contract (AMC)', label: isTe ? 'వార్షిక నిర్వహణ ఒప్పందం (AMC)' : 'Annual Maintenance Contract (AMC)' },
+                  { value: 'Vendor Empanelment / Registration', label: isTe ? 'వెండర్ రిజిస్ట్రేషన్ / ఎంప్లాయిమెంట్' : 'Vendor Empanelment / Supplier Onboarding' },
                 ]}
               />
             </FormField>
@@ -317,16 +328,16 @@ export const ContactForm: FC<ContactFormProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormField
               id="contact-mobile"
-              label="Mobile Number (Direct Contact)"
+              label={isTe ? 'మొబైల్ నంబర్' : 'Mobile Number (Direct Contact)'}
               required
               error={errors.mobile}
-              helperText="10-digit number for technician dispatch & callback"
+              helperText={isTe ? 'డిస్పాచ్ & కాల్‌బ్యాక్ కోసం 10 అంకెల నంబర్' : '10-digit number for technician dispatch & callback'}
             >
               <Input
                 id="contact-mobile"
                 name="mobile"
                 type="tel"
-                placeholder="e.g. 9876543210"
+                placeholder="e.g. 9866227780"
                 value={formData.mobile}
                 onChange={handleChange}
                 error={Boolean(errors.mobile)}
@@ -337,10 +348,10 @@ export const ContactForm: FC<ContactFormProps> = ({
 
             <FormField
               id="contact-email"
-              label="Official Work Email"
+              label={isTe ? 'అధికారిక ఈమెయిల్' : 'Official Work Email'}
               required
               error={errors.email}
-              helperText="For commercial quotation & job card documentation"
+              helperText={isTe ? 'కొటేషన్ మరియు జాబ్ కార్డ్ కోసం' : 'For commercial quotation & job card documentation'}
             >
               <Input
                 id="contact-email"
@@ -359,15 +370,15 @@ export const ContactForm: FC<ContactFormProps> = ({
           {/* Row 4: Plant Location */}
           <FormField
             id="contact-location"
-            label="Plant / Facility Location"
+            label={isTe ? 'ప్లాంట్ / పరిశ్రమ లొకేషన్' : 'Plant / Facility Location'}
             required
             error={errors.location}
-            helperText="City, District, State, or Industrial Area"
+            helperText={isTe ? 'నగరం, జిల్లా, రాష్ట్రం లేదా పారిశ్రామిక ప్రాంతం' : 'City, District, State, or Industrial Area'}
           >
             <Input
               id="contact-location"
               name="location"
-              placeholder="e.g. Industrial Development Area, Phase II"
+              placeholder={isTe ? 'ఉదా. తెనాలి / గుంటూరు / విశాఖపట్నం' : 'e.g. Tenali / Guntur / Visakhapatnam'}
               value={formData.location}
               onChange={handleChange}
               error={Boolean(errors.location)}
@@ -379,16 +390,16 @@ export const ContactForm: FC<ContactFormProps> = ({
           {/* Row 5: Detailed Enquiry Message */}
           <FormField
             id="contact-message"
-            label="Enquiry Details & Machinery Symptoms"
+            label={isTe ? 'సమస్య లేదా సర్వీస్ అవసరాల వివరాలు' : 'Enquiry Details & Machinery Symptoms'}
             required
             error={errors.message}
-            helperText="Specify equipment model, observed failure symptoms, or service requirements."
+            helperText={isTe ? 'యంత్ర మోడల్, సమస్య లక్షణాలు మరియు అవసరమైన సర్వీస్ రాయండి' : 'Specify equipment model, observed failure symptoms, or service requirements.'}
           >
             <Textarea
               id="contact-message"
               name="message"
               rows={4}
-              placeholder="Describe your machinery issue, required maintenance scope, or service timeframe..."
+              placeholder={isTe ? 'మీ యంత్ర సమస్య లేదా విచారణ వివరాలు రాయండి...' : 'Describe your machinery issue, required maintenance scope, or service timeframe...'}
               value={formData.message}
               onChange={handleChange}
               error={Boolean(errors.message)}
@@ -400,17 +411,16 @@ export const ContactForm: FC<ContactFormProps> = ({
           <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex items-center justify-between text-xs text-slate-600">
             <span className="flex items-center gap-1.5 font-medium">
               <ShieldCheck className="w-4 h-4 text-emerald-600" />
-              <span>Direct engineer dispatch review</span>
+              <span>{isTe ? 'ఇంజనీరింగ్ బృందం నేరుగా సమీక్షిస్తుంది' : 'Direct engineer dispatch review'}</span>
             </span>
             <span className="text-slate-400 font-mono text-[11px]">
-              No Automated Bots
+              VPE Engineering Desk
             </span>
           </div>
 
-          {/* Action Row */}
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-xs text-slate-500 text-center sm:text-left">
-              Fields marked with <span className="text-red-600 font-bold">*</span> are required for service dispatch.
+              {isTe ? '* గుర్తు ఉన్న ఫీల్డులు తప్పనిసరి.' : 'Fields marked with * are required for service dispatch.'}
             </p>
 
             <Button
@@ -421,7 +431,7 @@ export const ContactForm: FC<ContactFormProps> = ({
               rightIcon={<Send className="w-4 h-4" />}
               className="w-full sm:w-auto"
             >
-              Submit Service Enquiry
+              {t('contact.submit_btn')}
             </Button>
           </div>
         </form>
