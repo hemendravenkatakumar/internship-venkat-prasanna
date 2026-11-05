@@ -11,7 +11,6 @@ import {
   Menu, 
   X, 
   Phone, 
-  Clock, 
   ShieldCheck, 
   User, 
   ChevronRight
@@ -73,21 +72,47 @@ export const Navbar: FC = () => {
   return (
     <header className="sticky top-0 z-40 w-full bg-white border-b border-slate-200 shadow-xs">
       {/* Top Utility Bar for Industrial Contact & Safety Support */}
-      <div className="bg-slate-900 text-slate-300 text-xs py-2 border-b border-slate-800">
+      <div className="bg-slate-900 text-slate-300 text-xs py-2 border-b border-slate-800 overflow-hidden">
         <Container size="2xl">
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
-            <div className="flex items-center gap-6">
-              <span className="flex items-center gap-1.5 font-medium text-amber-400">
-                <ShieldCheck className="w-3.5 h-3.5" aria-hidden="true" />
-                {t('nav.portal_title')}
-              </span>
-              <span className="hidden md:flex items-center gap-1.5 text-slate-400">
-                <Clock className="w-3.5 h-3.5" aria-hidden="true" />
-                {t('company.support_availability')}
-              </span>
+          <div className="flex items-center justify-between gap-3 sm:gap-4">
+            {/* Horizontal Continuous Marquee Scrolling from Left to Right */}
+            <div className="relative flex-1 overflow-hidden min-w-0 h-5 flex items-center select-none marquee-mask">
+              <div className="animate-marquee-ltr flex items-center whitespace-nowrap">
+                {/* Block 1 */}
+                <div className="flex items-center shrink-0">
+                  {[1, 2, 3].map((idx) => (
+                    <span key={`mq1-${idx}`} className="inline-flex items-center gap-2 mx-5 text-xs">
+                      <ShieldCheck className="w-3.5 h-3.5 text-amber-400 shrink-0" aria-hidden="true" />
+                      <span className="font-extrabold text-amber-400 tracking-wider">
+                        VENKATA PRASANNA ENTERPRISES
+                      </span>
+                      <span className="text-amber-500/80 font-bold px-1">|</span>
+                      <span className="font-semibold text-white tracking-wide">
+                        24/7 Breakdown Support & Maintenance
+                      </span>
+                    </span>
+                  ))}
+                </div>
+                {/* Block 2 (identical duplicate for seamless 0-gap infinite loop) */}
+                <div className="flex items-center shrink-0" aria-hidden="true">
+                  {[1, 2, 3].map((idx) => (
+                    <span key={`mq2-${idx}`} className="inline-flex items-center gap-2 mx-5 text-xs">
+                      <ShieldCheck className="w-3.5 h-3.5 text-amber-400 shrink-0" aria-hidden="true" />
+                      <span className="font-extrabold text-amber-400 tracking-wider">
+                        VENKATA PRASANNA ENTERPRISES
+                      </span>
+                      <span className="text-amber-500/80 font-bold px-1">|</span>
+                      <span className="font-semibold text-white tracking-wide">
+                        24/7 Breakdown Support & Maintenance
+                      </span>
+                    </span>
+                  ))}
+                </div>
+              </div>
             </div>
 
-            <div className="flex items-center gap-3 text-xs">
+            {/* Right Controls: Language Selector, Emergency Hotline, Portal Login */}
+            <div className="flex items-center gap-2.5 sm:gap-3 text-xs shrink-0 z-10 pl-2 bg-slate-900">
               <LanguageSelector variant="dark" />
               <span className="text-slate-700 hidden sm:inline">|</span>
               <a
