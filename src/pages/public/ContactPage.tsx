@@ -9,7 +9,6 @@ import {
   Card,
   CardContent,
 } from '@/components/common';
-import { ContactForm } from '@/components/contact';
 import { useLanguage } from '@/context/LanguageContext';
 import {
   Phone,
@@ -22,6 +21,7 @@ import {
   Building2,
   UserCheck,
   FileCheck,
+  FileText,
 } from 'lucide-react';
 
 export const ContactPage: FC = () => {
@@ -148,137 +148,179 @@ export const ContactPage: FC = () => {
             align="left"
           />
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-            {/* Left Column (5 cols): Official Company Contact Information */}
-            <div className="lg:col-span-5 space-y-6">
-              <Card variant="default">
-                <CardContent className="p-6 sm:p-7 space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch max-w-6xl">
+            {/* Card 1: Official Company Contact Information */}
+            <Card variant="default" className="flex flex-col justify-between">
+              <CardContent className="p-6 sm:p-7 space-y-6">
+                <div>
+                  <Badge variant="amber">{isTe ? 'సంస్థ వివరాలు' : 'Enterprise Identity'}</Badge>
+                  <h3 className="text-lg sm:text-xl font-bold text-slate-900 mt-2">
+                    Venkata Prasanna Enterprises
+                  </h3>
+                  <p className="text-xs text-slate-500 font-medium">
+                    Industrial Service & Maintenance Management
+                  </p>
+                </div>
+
+                <div className="space-y-4 text-xs sm:text-sm text-slate-700 divide-y divide-slate-100">
+                  {/* Location */}
+                  <div className="flex items-start gap-3.5 pt-3 first:pt-0">
+                    <div className="w-9 h-9 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center shrink-0 mt-0.5">
+                      <MapPin className="w-4 h-4" aria-hidden="true" />
+                    </div>
+                    <div className="space-y-0.5">
+                      <span className="font-bold text-slate-900 block">{t('contact.location_title')}</span>
+                      <p className="text-slate-700 font-medium">
+                        Andhra Pradesh, India
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Phone / Contact Channel */}
+                  <div className="flex items-start gap-3.5 pt-3">
+                    <div className="w-9 h-9 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center shrink-0 mt-0.5">
+                      <Phone className="w-4 h-4" aria-hidden="true" />
+                    </div>
+                    <div className="space-y-0.5">
+                      <span className="font-bold text-slate-900 block">{t('contact.phone_title')}</span>
+                      <a
+                        href="tel:+919866227780"
+                        className="text-amber-800 font-mono font-bold text-base hover:text-amber-900 block"
+                      >
+                        +91 9866227780
+                      </a>
+                      <p className="text-[11px] text-slate-500">
+                        {isTe ? 'కాల్ లేదా వాట్సాప్ ద్వారా సంప్రదించవచ్చు' : 'Available for phone calls & technical dispatch'}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Official Email */}
+                  <div className="flex items-start gap-3.5 pt-3">
+                    <div className="w-9 h-9 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center shrink-0 mt-0.5">
+                      <Mail className="w-4 h-4" aria-hidden="true" />
+                    </div>
+                    <div className="space-y-0.5">
+                      <span className="font-bold text-slate-900 block">{t('contact.email_title')}</span>
+                      <a
+                        href="mailto:venkataprasannaenterprises@gmail.com"
+                        className="text-amber-700 hover:text-amber-800 font-medium font-mono text-xs break-all underline underline-offset-2"
+                      >
+                        venkataprasannaenterprises@gmail.com
+                      </a>
+                    </div>
+                  </div>
+
+                  {/* Founder & Lead Engineer */}
+                  <div className="flex items-start gap-3.5 pt-3">
+                    <div className="w-9 h-9 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center shrink-0 mt-0.5">
+                      <UserCheck className="w-4 h-4" aria-hidden="true" />
+                    </div>
+                    <div className="space-y-0.5">
+                      <span className="font-bold text-slate-900 block">{t('company.founder_title')}</span>
+                      <p className="text-slate-800 font-bold">
+                        {t('company.founder')}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* GSTIN */}
+                  <div className="flex items-start gap-3.5 pt-3">
+                    <div className="w-9 h-9 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center shrink-0 mt-0.5">
+                      <FileCheck className="w-4 h-4" aria-hidden="true" />
+                    </div>
+                    <div className="space-y-0.5">
+                      <span className="font-bold text-slate-900 block">{t('contact.gstin_title')}</span>
+                      <p className="text-slate-900 font-mono font-bold">
+                        37ADYPY2158A1Z1
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Operating Hours */}
+                  <div className="flex items-start gap-3.5 pt-3">
+                    <div className="w-9 h-9 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center shrink-0 mt-0.5">
+                      <Clock className="w-4 h-4" aria-hidden="true" />
+                    </div>
+                    <div className="space-y-0.5">
+                      <span className="font-bold text-slate-900 block">{isTe ? 'సేవా లభ్యత' : 'Service Availability'}</span>
+                      <p className="text-slate-600 font-medium text-xs text-emerald-700">
+                        {t('company.support_availability')}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Card 2: Corporate Procurement & Empanelment */}
+            <Card variant="default" className="flex flex-col justify-between">
+              <CardContent className="p-6 sm:p-7 space-y-6 flex flex-col justify-between h-full">
+                <div className="space-y-4">
                   <div>
-                    <Badge variant="amber">{isTe ? 'సంస్థ వివరాలు' : 'Enterprise Identity'}</Badge>
-                    <h3 className="text-lg sm:text-xl font-bold text-slate-900 mt-2">
-                      Venkata Prasanna Enterprises
-                    </h3>
-                    <p className="text-xs text-slate-500 font-medium">
-                      Industrial Service & Maintenance Management
+                    <Badge variant="amber">{isTe ? 'విక్రేత నమోదు' : 'Vendor Registration & Empanelment'}</Badge>
+                    <div className="flex items-center gap-2 mt-2">
+                      <FileText className="w-5 h-5 text-amber-600 shrink-0" aria-hidden="true" />
+                      <h3 className="text-lg sm:text-xl font-bold text-slate-900">
+                        {isTe ? 'కార్పొరేట్ సేకరణ & విక్రేత నమోదు' : 'Corporate Procurement & Empanelment'}
+                      </h3>
+                    </div>
+                    <p className="text-xs text-slate-500 font-medium mt-1">
+                      {isTe
+                        ? 'పరిశ్రమలు మరియు ప్లాంట్ల కోసం అధికారిక విక్రేత నమోదు'
+                        : 'Formal Empanelment & Compliance Documentation for Industrial Facilities'}
                     </p>
                   </div>
 
-                  <div className="space-y-4 text-xs sm:text-sm text-slate-700 divide-y divide-slate-100">
-                    {/* Location */}
-                    <div className="flex items-start gap-3.5 pt-3 first:pt-0">
-                      <div className="w-9 h-9 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center shrink-0 mt-0.5">
-                        <MapPin className="w-4 h-4" aria-hidden="true" />
-                      </div>
-                      <div className="space-y-0.5">
-                        <span className="font-bold text-slate-900 block">{t('contact.location_title')}</span>
-                        <p className="text-slate-700 font-medium">
-                          Andhra Pradesh, India
-                        </p>
-                      </div>
-                    </div>
+                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                    {isTe
+                      ? 'చట్టబద్ధమైన GST ఫైలింగ్‌లు, ఉద్యమ్ సర్టిఫికెట్లు లేదా అధికారిక విక్రేత నమోదు పత్రాలు అవసరమైన ప్లాంట్ ప్రొక్యూర్‌మెంట్ బృందాలు మా ధృవీకరించబడిన విక్రేత నమోదు రికార్డులను పరిశీలించవచ్చు.'
+                      : 'Plant procurement teams requiring statutory GST filings, Udyam certificates, or formal vendor registration dossiers can review our verified onboarding records and documentation.'}
+                  </p>
 
-                    {/* Phone / Contact Channel */}
-                    <div className="flex items-start gap-3.5 pt-3">
-                      <div className="w-9 h-9 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center shrink-0 mt-0.5">
-                        <Phone className="w-4 h-4" aria-hidden="true" />
-                      </div>
-                      <div className="space-y-0.5">
-                        <span className="font-bold text-slate-900 block">{t('contact.phone_title')}</span>
-                        <a
-                          href="tel:+919866227780"
-                          className="text-amber-800 font-mono font-bold text-base hover:text-amber-900 block"
-                        >
-                          +91 9866227780
-                        </a>
-                        <p className="text-[11px] text-slate-500">
-                          {isTe ? 'కాల్ లేదా వాట్సాప్ ద్వారా సంప్రదించవచ్చు' : 'Available for phone calls & technical dispatch'}
-                        </p>
-                      </div>
+                  <div className="bg-slate-50 rounded-xl p-4 sm:p-5 border border-slate-200 space-y-3">
+                    <div className="flex items-center gap-2 text-xs font-bold text-slate-900">
+                      <ShieldCheck className="w-4 h-4 text-emerald-600" aria-hidden="true" />
+                      <span>{isTe ? 'ధృవీకరించబడిన పారిశ్రామిక రికార్డులు' : 'Verified Enterprise Credentials'}</span>
                     </div>
-
-                    {/* Official Email */}
-                    <div className="flex items-start gap-3.5 pt-3">
-                      <div className="w-9 h-9 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center shrink-0 mt-0.5">
-                        <Mail className="w-4 h-4" aria-hidden="true" />
-                      </div>
-                      <div className="space-y-0.5">
-                        <span className="font-bold text-slate-900 block">{t('contact.email_title')}</span>
-                        <a
-                          href="mailto:venkataprasannaenterprises@gmail.com"
-                          className="text-amber-700 hover:text-amber-800 font-medium font-mono text-xs break-all underline underline-offset-2"
-                        >
-                          venkataprasannaenterprises@gmail.com
-                        </a>
-                      </div>
-                    </div>
-
-                    {/* Founder & Lead Engineer */}
-                    <div className="flex items-start gap-3.5 pt-3">
-                      <div className="w-9 h-9 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center shrink-0 mt-0.5">
-                        <UserCheck className="w-4 h-4" aria-hidden="true" />
-                      </div>
-                      <div className="space-y-0.5">
-                        <span className="font-bold text-slate-900 block">{t('company.founder_title')}</span>
-                        <p className="text-slate-800 font-bold">
-                          {t('company.founder')}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* GSTIN */}
-                    <div className="flex items-start gap-3.5 pt-3">
-                      <div className="w-9 h-9 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center shrink-0 mt-0.5">
-                        <FileCheck className="w-4 h-4" aria-hidden="true" />
-                      </div>
-                      <div className="space-y-0.5">
-                        <span className="font-bold text-slate-900 block">{t('contact.gstin_title')}</span>
-                        <p className="text-slate-900 font-mono font-bold">
-                          37ADYPY2158A1Z1
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Operating Hours */}
-                    <div className="flex items-start gap-3.5 pt-3">
-                      <div className="w-9 h-9 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center shrink-0 mt-0.5">
-                        <Clock className="w-4 h-4" aria-hidden="true" />
-                      </div>
-                      <div className="space-y-0.5">
-                        <span className="font-bold text-slate-900 block">{isTe ? 'సేవా లభ్యత' : 'Service Availability'}</span>
-                        <p className="text-slate-600 font-medium text-xs text-emerald-700">
-                          {t('company.support_availability')}
-                        </p>
-                      </div>
-                    </div>
+                    <ul className="text-xs text-slate-600 space-y-2.5">
+                      <li className="flex items-start gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 shrink-0" />
+                        <span>
+                          <strong className="text-slate-800">26 {isTe ? 'ధృవీకరించబడిన పరిశ్రమలు' : 'Verified Industrial Clients'}:</strong>{' '}
+                          {isTe
+                            ? 'రైస్ మిల్లులు, టెక్స్‌టైల్స్, కాటన్ జిన్నింగ్ మరియు జీడిపప్పు పరిశ్రమలు'
+                            : 'Rice Mills, Cotton Ginning, Spinning, Weaving, and Cashew Processing'}
+                        </span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 shrink-0" />
+                        <span>
+                          <strong className="text-slate-800">GSTIN: 37ADYPY2158A1Z1:</strong>{' '}
+                          {isTe ? 'అధికారిక నమోదిత పన్ను చెల్లింపుదారు (ఆంధ్రప్రదేశ్)' : 'Active Regular Taxpayer, Andhra Pradesh'}
+                        </span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 shrink-0" />
+                        <span>
+                          {isTe
+                            ? 'బ్యాంక్ ఆదేశం, జిఎస్‌టి ధృవీకరణ పత్రాలు మరియు పని రికార్డులు పరిశీలనకు సిద్ధంగా ఉన్నాయి.'
+                            : 'Statutory filings, bank mandates, and completion records readily available.'}
+                        </span>
+                      </li>
+                    </ul>
                   </div>
-                </CardContent>
-              </Card>
-
-              {/* Fast Service Request Banner Card */}
-              <Card variant="industrial" className="p-6 space-y-3">
-                <div className="flex items-center gap-2 text-slate-900 font-bold text-base">
-                  <Wrench className="w-5 h-5 text-amber-600" />
-                  <h4>{isTe ? 'తక్షణ యంత్ర సమస్య ఎదురైందా?' : 'Have an Immediate Machine Failure?'}</h4>
                 </div>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  {isTe
-                    ? 'మెషిన్ సమస్య, ఫోటోలు లేదా ఆడియో రికార్డింగ్‌తో వెంటనే సర్వీస్ అభ్యర్థన టికెట్ సృష్టించండి.'
-                    : 'For active machine breakdowns requiring prompt on-site engineering triage, submit a dedicated Service Request ticket with machine serial numbers and symptoms.'}
-                </p>
-                <div className="pt-1">
-                  <Link to={ROUTES.CUSTOMER.SERVICE_REQUEST}>
-                    <Button variant="industrial" size="sm" fullWidth rightIcon={<ArrowRight className="w-4 h-4" />}>
-                      {t('request.submit_btn')}
+
+                <div className="pt-4 border-t border-slate-100">
+                  <Link to={ROUTES.PUBLIC.VENDOR_EXPERIENCE} className="w-full inline-block">
+                    <Button variant="industrial" size="md" fullWidth rightIcon={<ArrowRight className="w-4 h-4" />}>
+                      {isTe ? 'విక్రేత నమోదు వివరాలను చూడండి' : 'Review Vendor Registrations'}
                     </Button>
                   </Link>
                 </div>
-              </Card>
-            </div>
-
-            {/* Right Column (7 cols): Validated Contact & Enquiry Form */}
-            <div className="lg:col-span-7 space-y-4">
-              <ContactForm />
-            </div>
+              </CardContent>
+            </Card>
           </div>
         </Container>
       </section>
