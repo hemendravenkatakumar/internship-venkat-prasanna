@@ -89,8 +89,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 className="flex items-center gap-2 group text-white font-bold"
                 title="Return to Public Website"
               >
-                <div className="w-8 h-8 rounded bg-amber-500 text-slate-950 flex items-center justify-center">
-                  <Wrench className="w-4 h-4" />
+                <div className="h-9 w-9 rounded-lg bg-white p-0.5 flex items-center justify-center shrink-0 shadow-xs">
+                  <img
+                    src="/images/logo/logo.jpg"
+                    alt="VPE Logo"
+                    className="h-full w-full object-contain rounded"
+                  />
                 </div>
                 <span className="tracking-tight text-sm sm:text-base">VPE INDUSTRIAL</span>
               </Link>

@@ -7,7 +7,6 @@ import { LanguageSelector } from '@/components/common/LanguageSelector';
 import { useLanguage } from '@/context/LanguageContext';
 import { NavItem } from '@/types';
 import { 
-  Wrench, 
   Menu, 
   X, 
   Phone, 
@@ -145,9 +144,11 @@ export const Navbar: FC = () => {
               className="flex items-center gap-3 group focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-slate-900 rounded-md p-1"
               aria-label="Venkata Prasanna Enterprises Home"
             >
-              <div className="w-10 h-10 rounded-lg bg-slate-900 text-amber-500 flex items-center justify-center font-bold shadow-sm group-hover:bg-slate-800 transition-colors">
-                <Wrench className="w-5 h-5 text-amber-400" aria-hidden="true" />
-              </div>
+              <img
+                src="/images/logo/logo.jpg"
+                alt="Venkata Prasanna Enterprises Official Logo"
+                className="h-10 sm:h-12 w-auto object-contain rounded-md shadow-xs group-hover:scale-105 transition-transform"
+              />
               <div className="flex flex-col">
                 <span className="text-base sm:text-lg font-black tracking-tight text-slate-900 leading-none">
                   VENKATA PRASANNA
@@ -222,9 +223,21 @@ export const Navbar: FC = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between pb-4 border-b border-slate-200">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                Menu & Navigation
-              </span>
+              <div className="flex items-center gap-2.5">
+                <img
+                  src="/images/logo/logo.jpg"
+                  alt="VPE Logo"
+                  className="h-8 w-auto object-contain rounded"
+                />
+                <div className="flex flex-col">
+                  <span className="text-xs font-black tracking-tight text-slate-900 leading-none">
+                    VENKATA PRASANNA
+                  </span>
+                  <span className="text-[9px] font-bold tracking-wider text-amber-700 uppercase">
+                    Enterprises
+                  </span>
+                </div>
+              </div>
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="p-1 rounded-md text-slate-500 hover:text-slate-800"

@@ -301,9 +301,16 @@ export const HomePage: FC = () => {
               {/* Left Column: Headline, Description, and CTAs */}
               <div className="lg:col-span-7 space-y-6 sm:space-y-8">
                 <div className="flex flex-wrap items-center gap-3">
-                  <Badge variant="amber" icon={<Wrench className="w-3.5 h-3.5" />}>
-                    {t('home.hero_badge')}
-                  </Badge>
+                  <div className="flex items-center gap-2 bg-white/10 backdrop-blur-xs px-2.5 py-1 rounded-lg border border-white/15">
+                    <img
+                      src="/images/logo/logo.jpg"
+                      alt="VPE Logo"
+                      className="h-6 w-6 object-contain rounded bg-white p-0.5"
+                    />
+                    <span className="text-xs font-bold text-amber-400">
+                      {t('home.hero_badge')}
+                    </span>
+                  </div>
                   <span className="text-xs font-mono text-slate-400">
                     {t('home.hero_tag')}
                   </span>
@@ -432,6 +439,22 @@ export const HomePage: FC = () => {
         <Container size="2xl">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             <div className="space-y-6">
+              <div className="flex items-center gap-3">
+                <img
+                  src="/images/logo/logo.jpg"
+                  alt="Venkata Prasanna Enterprises Official Logo"
+                  className="h-12 w-12 object-contain rounded-xl bg-white border border-slate-200 shadow-xs p-1"
+                />
+                <div>
+                  <span className="text-xs font-bold text-amber-700 uppercase tracking-widest block">
+                    Venkata Prasanna Enterprises
+                  </span>
+                  <span className="text-[11px] text-slate-500 font-medium">
+                    Excellence in Every Service
+                  </span>
+                </div>
+              </div>
+
               <SectionHeading
                 badge={t('home.about_badge')}
                 title={t('home.about_title')}

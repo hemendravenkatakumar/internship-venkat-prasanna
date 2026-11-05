@@ -78,15 +78,19 @@ export const Footer: FC = () => {
             {/* Column 1: Brand Info */}
             <div className="lg:col-span-2 space-y-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-amber-500 text-slate-950 flex items-center justify-center font-bold">
-                  <Wrench className="w-5 h-5 text-slate-950" />
+                <div className="h-12 w-12 rounded-lg bg-white p-1 flex items-center justify-center shrink-0 shadow-sm border border-slate-700/50">
+                  <img
+                    src="/images/logo/logo.jpg"
+                    alt="Venkata Prasanna Enterprises Official Logo"
+                    className="h-full w-full object-contain rounded"
+                  />
                 </div>
                 <div>
                   <span className="text-lg font-black tracking-tight text-white block leading-none">
                     VENKATA PRASANNA
                   </span>
-                  <span className="text-xs font-bold tracking-widest text-amber-500 uppercase">
-                    Enterprises
+                  <span className="text-xs font-bold tracking-widest text-amber-500 uppercase mt-0.5 block">
+                    Enterprises • Industrial Services
                   </span>
                 </div>
               </div>

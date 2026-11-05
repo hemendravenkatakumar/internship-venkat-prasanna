@@ -49,14 +49,26 @@ export const RegisterPage: FC = () => {
         </nav>
 
         {/* Page Title & Intro */}
-        <div className="max-w-3xl mb-8 space-y-2">
-          <div className="flex items-center gap-2">
-            <Badge variant="amber" icon={<Building2 className="w-3.5 h-3.5" />}>
-              Corporate Account Onboarding
-            </Badge>
-            <span className="text-xs font-mono text-slate-500">
-              Plant Portal Access
-            </span>
+        <div className="max-w-3xl mb-8 space-y-3">
+          <div className="flex items-center gap-3">
+            <img
+              src="/images/logo/logo.jpg"
+              alt="Venkata Prasanna Enterprises Logo"
+              className="h-12 w-12 object-contain rounded-xl bg-white border border-slate-200 shadow-xs p-1"
+            />
+            <div>
+              <div className="flex items-center gap-2">
+                <Badge variant="amber" icon={<Building2 className="w-3.5 h-3.5" />}>
+                  Corporate Account Onboarding
+                </Badge>
+                <span className="text-xs font-mono text-slate-500">
+                  Plant Portal Access
+                </span>
+              </div>
+              <span className="text-xs font-bold text-amber-800 uppercase tracking-wider block mt-1">
+                Venkata Prasanna Enterprises
+              </span>
+            </div>
           </div>
 
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">

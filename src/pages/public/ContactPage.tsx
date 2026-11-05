@@ -152,14 +152,23 @@ export const ContactPage: FC = () => {
             {/* Card 1: Official Company Contact Information */}
             <Card variant="default" className="flex flex-col justify-between">
               <CardContent className="p-6 sm:p-7 space-y-6">
-                <div>
-                  <Badge variant="amber">{isTe ? 'సంస్థ వివరాలు' : 'Enterprise Identity'}</Badge>
-                  <h3 className="text-lg sm:text-xl font-bold text-slate-900 mt-2">
-                    Venkata Prasanna Enterprises
-                  </h3>
-                  <p className="text-xs text-slate-500 font-medium">
-                    Industrial Service & Maintenance Management
-                  </p>
+                <div className="flex items-center gap-3.5">
+                  <div className="w-14 h-14 rounded-xl bg-white border border-slate-200 p-1 flex items-center justify-center shrink-0 shadow-xs">
+                    <img
+                      src="/images/logo/logo.jpg"
+                      alt="Venkata Prasanna Enterprises Official Logo"
+                      className="h-full w-full object-contain rounded"
+                    />
+                  </div>
+                  <div>
+                    <Badge variant="amber">{isTe ? 'సంస్థ వివరాలు' : 'Enterprise Identity'}</Badge>
+                    <h3 className="text-lg sm:text-xl font-bold text-slate-900 mt-1">
+                      Venkata Prasanna Enterprises
+                    </h3>
+                    <p className="text-xs text-slate-500 font-medium">
+                      Industrial Service & Maintenance Management
+                    </p>
+                  </div>
                 </div>
 
                 <div className="space-y-4 text-xs sm:text-sm text-slate-700 divide-y divide-slate-100">

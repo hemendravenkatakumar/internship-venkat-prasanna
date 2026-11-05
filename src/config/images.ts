@@ -20,6 +20,22 @@ export interface IndustrialImageItem {
 }
 
 export const INDUSTRIAL_IMAGES = {
+  // Official Company Brand Logomarks
+  brand: {
+    logo: {
+      id: 'brand-logo',
+      title: 'Venkata Prasanna Enterprises Official Logo',
+      url: '/images/logo/logo.jpg',
+      alt: 'Venkata Prasanna Enterprises Official Brand Logo and Gear Emblem',
+    },
+    logoVertical: {
+      id: 'brand-logo-vertical',
+      title: 'Venkata Prasanna Enterprises Full Insignia',
+      url: '/images/logo/logo-full.jpg',
+      alt: 'Venkata Prasanna Enterprises Insignia - Industrial Services - Excellence in Every Service',
+    },
+  },
+
   // Hero & General Factory Imagery
   hero: {
     wideFactory: {

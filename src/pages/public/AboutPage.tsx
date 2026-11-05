@@ -254,10 +254,24 @@ export const AboutPage: FC = () => {
 
             {/* Quick Facts Card with Verified Company Information */}
             <div className="bg-slate-50 rounded-2xl border border-slate-200 p-6 sm:p-8 space-y-6">
-              <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-amber-600" aria-hidden="true" />
-                {isTe ? 'అధికారిక సంస్థ వివరాలు' : 'Verified Enterprise Facts'}
-              </h3>
+              <div className="flex items-center gap-4 pb-4 border-b border-slate-200">
+                <div className="w-16 h-16 rounded-xl bg-white border border-slate-200 p-1 flex items-center justify-center shrink-0 shadow-xs">
+                  <img
+                    src="/images/logo/logo.jpg"
+                    alt="Venkata Prasanna Enterprises Official Logo"
+                    className="h-full w-full object-contain rounded"
+                  />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                    <Building2 className="w-4 h-4 text-amber-600" aria-hidden="true" />
+                    {isTe ? 'అధికారిక సంస్థ వివరాలు' : 'Verified Enterprise Facts'}
+                  </h3>
+                  <span className="text-xs text-amber-800 font-bold uppercase tracking-wider block mt-0.5">
+                    Venkata Prasanna Enterprises
+                  </span>
+                </div>
+              </div>
 
               <dl className="space-y-3.5 text-xs sm:text-sm">
                 <div className="flex items-start justify-between py-2 border-b border-slate-200">
